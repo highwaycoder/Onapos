@@ -1,0 +1,14 @@
+Our New Awesome Piece Of Software
+
+We're very happy to announce the creation of this project: ONAPOS
+
+It's a simple collections manager written in Java.
+
+Features:
+ - create any kind of collection easily and quickly: books, movies, magazines, you name it!
+ - infinite possibilities for meta data - fancy making a record of all the scribbles you write in the margins of books? simply add a "margin-scribbles" field and record away!
+ - low memory footprint
+ - easy sorting and filtering of collections
+
+Known bugs:
+ - see Issues on the github page (github.com/cjbrowne/Onapos)
