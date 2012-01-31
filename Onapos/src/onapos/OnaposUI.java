@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -22,6 +23,7 @@ public class OnaposUI {
 	private static String collectionLocation;
 	private JFrame frame;
 	private List<Collection> collections;
+	private DefaultListModel collectionSelectorModel;
 	
 	/**
 	 * Launch the application.
@@ -56,6 +58,11 @@ public class OnaposUI {
 		}
 		initialize();
 	}
+	
+	public void addCollection(Collection c) {
+		collections.add(c);
+		
+	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -78,7 +85,7 @@ public class OnaposUI {
 		JMenuItem mntmOpenCollection = new JMenuItem("Open Collection");
 		
 		mnFile.add(mntmOpenCollection);
-		mntmOpenCollection.addActionListener(new OpenCollectionListener());
+		mntmOpenCollection.addActionListener(new OpenCollectionListener(this));
 		
 		JMenuItem mntmSaveCollection = new JMenuItem("Save Collection");
 		mnFile.add(mntmSaveCollection);
@@ -96,15 +103,18 @@ public class OnaposUI {
 		mnFile.add(mntmExit);
 		
 		JLabel collectionSelectorLabel = new JLabel("Collection:");
-		
-		ArrayList<String> collectionNames = new ArrayList<String>();
-		for(Collection c : collections) {
-			collectionNames.add(c.getName());
-		}
-		JList collectionSelector = new JList(collectionNames.toArray());
+		collectionSelectorModel = new DefaultListModel();
+		refreshCollectionList();
+		JList collectionSelector = new JList(collectionSelectorModel);
 		
 		frame.add(collectionSelectorLabel);
 		frame.add(collectionSelector);
+	}
+	
+	public void refreshCollectionList() {
+		collectionSelectorModel.removeAllElements();
+		for(Collection c : collections) 
+			collectionSelectorModel.addElement(c.getName());
 	}
 	
 	private class NewCollectionListener implements ActionListener {

@@ -7,13 +7,19 @@ import javax.swing.JFileChooser;
 
 public class OpenCollectionListener implements ActionListener {
 	
+	private OnaposUI context;
+	
+	public OpenCollectionListener(OnaposUI o) {
+		context = o;
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		JFileChooser fc = new JFileChooser();
 		fc.showOpenDialog(null);
 		CollectionFile cf = new CollectionFile(fc.getSelectedFile());
-		cf.read();
-		// TODO: find a way to send this Collection back to OnaposUI
+		context.addCollection(cf.read());
+		context.refreshCollectionList();
 	}
 
 }
