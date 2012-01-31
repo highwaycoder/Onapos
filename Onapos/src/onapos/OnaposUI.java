@@ -21,7 +21,7 @@ public class OnaposUI {
 	public static final String DEFAULT_COLLECTION_LOCATION = "/usr/share/onapos/collections/";
 	private static String collectionLocation;
 	private JFrame frame;
-	private List<Collection> collections = new ArrayList<Collection>();
+	private List<Collection> collections;
 	
 	/**
 	 * Launch the application.
@@ -48,6 +48,7 @@ public class OnaposUI {
 	 * Create the application.
 	 */
 	public OnaposUI() {
+		collections = new ArrayList<Collection>();
 		try {
 			loadCollections();
 		} catch(IOException e) {
@@ -75,10 +76,13 @@ public class OnaposUI {
 		mnFile.add(mntmNewCollection);
 		mntmNewCollection.addActionListener(new NewCollectionListener());
 		JMenuItem mntmOpenCollection = new JMenuItem("Open Collection");
+		
 		mnFile.add(mntmOpenCollection);
+		mntmOpenCollection.addActionListener(new OpenCollectionListener());
 		
 		JMenuItem mntmSaveCollection = new JMenuItem("Save Collection");
 		mnFile.add(mntmSaveCollection);
+		mntmSaveCollection.addActionListener(new SaveCollectionListener());
 		
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(new ActionListener() {
