@@ -15,6 +15,8 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -80,16 +82,10 @@ public class OnaposUI {
 		menuBar.add(mnFile);
 		
 		JMenuItem mntmNewCollection = new JMenuItem("New Collection");
-		mnFile.add(mntmNewCollection);
-		mntmNewCollection.addActionListener(new NewCollectionListener());
+		mntmNewCollection.addActionListener(new NewCollectionListener(this));
 		JMenuItem mntmOpenCollection = new JMenuItem("Open Collection");
-		
-		mnFile.add(mntmOpenCollection);
 		mntmOpenCollection.addActionListener(new OpenCollectionListener(this));
 		
-		JMenuItem mntmSaveCollection = new JMenuItem("Save Collection");
-		mnFile.add(mntmSaveCollection);
-		mntmSaveCollection.addActionListener(new SaveCollectionListener());
 		
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(new ActionListener() {
@@ -100,15 +96,53 @@ public class OnaposUI {
 				System.exit(0);
 			}
 		});
-		mnFile.add(mntmExit);
 		
 		JLabel collectionSelectorLabel = new JLabel("Collection:");
 		collectionSelectorModel = new DefaultListModel();
 		refreshCollectionList();
-		JList collectionSelector = new JList(collectionSelectorModel);
+		final JList collectionSelector = new JList(collectionSelectorModel);
+		
+		// this menu item must be created after the collection selector list
+		JMenuItem mntmSaveCollection = new JMenuItem("Save Collection");
+		final SaveCollectionListener scl = new SaveCollectionListener();
+		mntmSaveCollection.addActionListener(scl);
+		
+		class CollectionSelectionListener implements ListSelectionListener {
+			
+			public void valueChanged(ListSelectionEvent arg0) {	
+				Collection c;
+				if((c = getSelectedCollection(collectionSelector)) == null) return; // silent fail (nothing selected)
+				scl.setCollection(c);
+				// FIXME: unfinished implementation
+			}
+			
+		}
+		
+		collectionSelector.addListSelectionListener(new CollectionSelectionListener());
+		
+		
+		// setup the menu in the proper order:
+		mnFile.add(mntmNewCollection);
+		mnFile.add(mntmOpenCollection);
+		mnFile.add(mntmSaveCollection);
+		mnFile.add(mntmExit);
+
 		
 		frame.add(collectionSelectorLabel);
 		frame.add(collectionSelector);
+	}
+	
+	// FIXME: I'm not happy with the below code, it relies on collections and collectionSelector being sync
+	public Collection getSelectedCollection(JList collectionSelector) {
+		if(collectionSelector.isSelectionEmpty()) {
+			return null; // fail silently if the selection has merely been cleared
+		}
+		int index = collectionSelector.getSelectedIndex();
+		if(index < 0 || index > collections.size()) {
+			System.err.println("Warning: tried to access collection outside the collection of collections (inception?)");
+			return null;
+		}
+		return collections.get(collectionSelector.getSelectedIndex());
 	}
 	
 	public void refreshCollectionList() {
@@ -118,9 +152,16 @@ public class OnaposUI {
 	}
 	
 	private class NewCollectionListener implements ActionListener {
+		
+		private OnaposUI context;
+		
+		public NewCollectionListener(OnaposUI context) {
+			this.context = context;
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			new NewCollectionFrame();
+			new NewCollectionFrame(context);
 			// load collections from file
 			try {
 				loadCollections();

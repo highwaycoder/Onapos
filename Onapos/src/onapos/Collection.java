@@ -2,9 +2,10 @@ package onapos;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Collection {
-	private ArrayList<Item> items;
+	private List<Item> items;
 	private String name;
 	private String type;
 	
@@ -25,8 +26,8 @@ public class Collection {
 	 * Safe (non-modifying) method for sorting collections
 	 * @return a sorted list
 	 */
-	public ArrayList<Item> sortItemsSafe(String by) {
-		ArrayList<Item> sorted = new ArrayList<Item>();
+	public List<Item> sortItemsSafe(String by) {
+		List<Item> sorted = new ArrayList<Item>();
 		for(Item item : items) {
 			if(sorted.isEmpty())
 				sorted.add(item);
@@ -51,11 +52,11 @@ public class Collection {
 		items.add(i);
 	}
 	
-	public void addItems(ArrayList<Item> i) {
+	public void addItems(List<Item> i) {
 		items.addAll(i);
 	}
 	
-	public ArrayList<Item> getItems() {
+	public List<Item> getItems() {
 		return items;
 	}
 	
@@ -64,5 +65,13 @@ public class Collection {
 			return new HashMap<String,Property>();
 		else
 			return items.get(0).getProperties();
+	}
+	
+	public int numItems() {
+		return items.size();
+	}
+	
+	public int numProperties() {
+		return getProperties().size();
 	}
 }

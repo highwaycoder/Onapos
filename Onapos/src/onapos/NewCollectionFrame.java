@@ -11,10 +11,9 @@ import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 
 public class NewCollectionFrame {
-	
 	private JFrame frame;
 	
-	public NewCollectionFrame() {
+	public NewCollectionFrame(OnaposUI context) {
 		frame = new JFrame();
 		frame.setBounds(150, 150, 350, 200);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -39,7 +38,7 @@ public class NewCollectionFrame {
 		fieldPanel.add(collectionTypeField);
 		
 		JButton createButton = new JButton("Create");
-		createButton.addActionListener(new CreateCollectionListener(collectionNameField.getText(),collectionTypeField.getText()));
+		createButton.addActionListener(new CreateCollectionListener(collectionNameField.getText(),collectionTypeField.getText(),context));
 		frame.add(labelPanel);
 		frame.add(fieldPanel);
 		frame.add(createButton);

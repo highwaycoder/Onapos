@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 public class CollectionFile {
@@ -33,7 +34,7 @@ public class CollectionFile {
 	 */
 	public void write(Collection c) {
 		collection = c;
-		this.write();
+		write();
 	}
 	
 	/**
@@ -77,7 +78,7 @@ public class CollectionFile {
 				buffedWriter.write(entry.getValue().getTypeAsString());
 				buffedWriter.newLine();
 			}
-			ArrayList<Item> items = collection.getItems();
+			List<Item> items = collection.getItems();
 			for(Item i : items) {
 				buffedWriter.write("item {");
 				buffedWriter.newLine();
@@ -110,6 +111,7 @@ public class CollectionFile {
 						}
 						buffedWriter.newLine();
 					} catch (PropertyException e) {
+						// TODO: if PropertyException gets thrown any other way, this code becomes reachable
 						System.err.println("Unreachable code, but the compiler don't care none anyhow!");
 						System.exit(42);
 					}
@@ -146,9 +148,9 @@ public class CollectionFile {
 			String curLine;
 			String collectionName = "Untitled Collection";
 			String collectionType = "Generic";
-			ArrayList<String> propertyNames = new ArrayList<String>();
-			ArrayList<String> propertyTypes = new ArrayList<String>();
-			ArrayList<Item> items = new ArrayList<Item>();
+			List<String> propertyNames = new ArrayList<String>();
+			List<String> propertyTypes = new ArrayList<String>();
+			List<Item> items = new ArrayList<Item>();
 			while((curLine = buffedReader.readLine()) != null) {
 				if(curLine.trim().startsWith("name:")) {
 					collectionName = curLine.substring(curLine.indexOf(':')+1);

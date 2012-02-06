@@ -37,4 +37,10 @@ public class Item implements Comparable<Item> {
 	public HashMap<String,Property> getProperties() {
 		return properties;
 	}
+	
+	public void printAll() {
+		for(Property p : properties.values()) {
+			System.out.println(p.toString());
+		}
+	}
 }

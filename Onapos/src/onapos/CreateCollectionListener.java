@@ -8,15 +8,16 @@ import javax.swing.JFileChooser;
 public class CreateCollectionListener implements ActionListener {
 	private String cName;
 	private String cType;
+	private OnaposUI context;
 	
-	public CreateCollectionListener(String collectionName,String collectionType) {
-		cName = collectionName;
-		cType = collectionType;
+	public CreateCollectionListener(String collectionName,OnaposUI context) {
+		this(collectionName,"Generic",context);
 	}
 	
-	public CreateCollectionListener(String collectionName,String collectionType,String collectionLocation) {
+	public CreateCollectionListener(String collectionName,String collectionType,OnaposUI context) {
 		cName = collectionName;
 		cType = collectionType;
+		this.context = context;
 	}
 	
 	@Override
@@ -26,6 +27,8 @@ public class CreateCollectionListener implements ActionListener {
 		fc.showSaveDialog(null);
 		CollectionFile saveFile = new CollectionFile(saveCollection,fc.getSelectedFile());
 		saveFile.write();
+		context.addCollection(saveCollection);
+		context.refreshCollectionList();
 	}
 
 }

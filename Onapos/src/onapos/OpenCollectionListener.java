@@ -17,6 +17,7 @@ public class OpenCollectionListener implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		JFileChooser fc = new JFileChooser();
 		fc.showOpenDialog(null);
+		if(fc.getSelectedFile() == null) return; // avoids a NullPointerException from CollectionFile if the frame is disposed without a file being selected
 		CollectionFile cf = new CollectionFile(fc.getSelectedFile());
 		context.addCollection(cf.read());
 		context.refreshCollectionList();
