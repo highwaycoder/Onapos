@@ -15,8 +15,11 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -26,6 +29,8 @@ public class OnaposUI {
 	private JFrame frame;
 	private List<Collection> collections;
 	private DefaultListModel collectionSelectorModel;
+	private JTable collectionView;
+	private DefaultTableModel collectionViewData;
 	
 	/**
 	 * Launch the application.
@@ -107,13 +112,17 @@ public class OnaposUI {
 		final SaveCollectionListener scl = new SaveCollectionListener();
 		mntmSaveCollection.addActionListener(scl);
 		
+		
+		collectionViewData = new DefaultTableModel();
+		collectionView = new JTable(collectionViewData);
+		
 		class CollectionSelectionListener implements ListSelectionListener {
 			
 			public void valueChanged(ListSelectionEvent arg0) {	
 				Collection c;
 				if((c = getSelectedCollection(collectionSelector)) == null) return; // silent fail (nothing selected)
 				scl.setCollection(c);
-				// FIXME: unfinished implementation
+				populateTable(c);
 			}
 			
 		}
@@ -130,6 +139,24 @@ public class OnaposUI {
 		
 		frame.add(collectionSelectorLabel);
 		frame.add(collectionSelector);
+		frame.add(collectionView);
+	}
+	
+	public void populateTable(Collection c) {
+		TableColumn[] cols = new TableColumn[c.getProperties().values().size()];
+		collectionViewData = new DefaultTableModel();
+		int i=0;
+		for(Property p : c.getProperties().values()) {
+			cols[i] = new TableColumn();
+			cols[i].setHeaderValue(p.toString());
+			collectionViewData.addColumn(cols[i]);
+			i++;
+		}
+		collectionView.setModel(collectionViewData);
+		for(Item item : c.getItems()) {
+			collectionViewData.addRow(item.getProperties().values().toArray());
+		}
+		collectionViewData.fireTableDataChanged();
 	}
 	
 	// FIXME: I'm not happy with the below code, it relies on collections and collectionSelector being sync
