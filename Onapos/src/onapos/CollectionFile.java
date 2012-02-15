@@ -7,9 +7,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 public class CollectionFile {
@@ -148,8 +152,7 @@ public class CollectionFile {
 			String curLine;
 			String collectionName = "Untitled Collection";
 			String collectionType = "Generic";
-			List<String> propertyNames = new ArrayList<String>();
-			List<String> propertyTypes = new ArrayList<String>();
+			Map<String,PropertyType> properties = new HashMap<String,PropertyType>();
 			List<Item> items = new ArrayList<Item>();
 			while((curLine = buffedReader.readLine()) != null) {
 				if(curLine.trim().startsWith("name:")) {
@@ -159,8 +162,9 @@ public class CollectionFile {
 					collectionType = curLine.substring(curLine.indexOf(':')+1);
 				}
 				if(curLine.trim().startsWith("field:")) {
-					propertyNames.add(curLine.trim().substring(curLine.trim().indexOf(':')+1,curLine.trim().indexOf(',')));
-					propertyTypes.add(curLine.trim().substring(curLine.trim().indexOf(',')+1));
+					String propertyName = curLine.trim().substring(curLine.trim().indexOf(':')+1,curLine.trim().indexOf(','));
+					String propertyType = curLine.trim().substring(curLine.trim().indexOf(',')+1);
+					properties.put(propertyName, Property.getTypeByName(propertyType));
 				}
 				if(curLine.trim().startsWith("item")) {
 					Item curItem = new Item();
@@ -170,9 +174,37 @@ public class CollectionFile {
 						if(curLine.contains("}") && (curLine.indexOf("}") == 0 || curLine.charAt(curLine.indexOf("}")-1)!='\\')) {
 							foundLastBracket = true;
 						}
-						for(String propertyName : propertyNames) {
-							if(curLine.trim().startsWith(propertyName)) {
-								curItem.addProperty(propertyName, new Property(curLine.substring(curLine.indexOf(":")+1)));
+						for(Entry<String,PropertyType> e : properties.entrySet()) {
+							if(curLine.trim().startsWith(e.getKey())) {
+								Property p;
+								String propertyString = curLine.substring(curLine.indexOf(":")+1);
+								switch(e.getValue()) {
+								case STRING:
+									p = new Property(propertyString);
+									break;
+								case INTEGER:
+									p = new Property(Integer.parseInt(propertyString));
+									break;
+								case DATE:
+									DateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
+									try {
+										p = new Property(SDF.parse(propertyString));
+									} catch (ParseException pe) {
+										System.err.println("WARNING: Date could not be parsed, storing as String instead");
+										p = new Property(propertyString);
+									}
+									break;
+								case DOUBLE:
+									p = new Property(Double.parseDouble(propertyString));
+									break;
+								case BOOLEAN:
+									p = new Property(Boolean.parseBoolean(propertyString));
+									break;
+								default:
+									p = new Property(propertyString);
+									break;
+								}
+								curItem.addProperty(e.getKey(),p);
 							}
 						}
 					}

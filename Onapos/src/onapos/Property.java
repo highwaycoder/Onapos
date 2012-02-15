@@ -32,6 +32,11 @@ public class Property implements Comparable<Property> {
 		asDate = value;
 	}
 	
+	public Property(boolean value) {
+		type = PropertyType.BOOLEAN;
+		asBoolean = value;
+	}
+	
 	// TODO: is there a less abusive way of doing this?
 	public Property() throws Exception {
 		throw new Exception("ERROR: invoked a naked property");
@@ -140,4 +145,13 @@ public class Property implements Comparable<Property> {
 		}
 	}
 	
+	public static PropertyType getTypeByName(String name) {
+		if(name.equalsIgnoreCase("string")) return PropertyType.STRING;
+		if(name.equalsIgnoreCase("integer") || name.equalsIgnoreCase("int")) return PropertyType.INTEGER;
+		if(name.equalsIgnoreCase("double") || name.equalsIgnoreCase("float")) return PropertyType.DOUBLE;
+		if(name.equalsIgnoreCase("date")) return PropertyType.DATE;
+		if(name.equalsIgnoreCase("boolean")) return PropertyType.BOOLEAN;
+		// default to string
+		return PropertyType.STRING;
+	}
 }
