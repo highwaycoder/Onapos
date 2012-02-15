@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
@@ -15,11 +16,11 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -139,25 +140,43 @@ public class OnaposUI {
 		
 		frame.add(collectionSelectorLabel);
 		frame.add(collectionSelector);
-		frame.add(collectionView);
+		frame.add(new JScrollPane(collectionView));
+		frame.pack();
 	}
 	
 	public void populateTable(Collection c) {
-		TableColumn[] cols = new TableColumn[c.getProperties().values().size()];
 		collectionViewData = new DefaultTableModel();
-		int i=0;
-		for(Property p : c.getProperties().values()) {
-			cols[i] = new TableColumn();
-			cols[i].setHeaderValue(p.toString());
-			collectionViewData.addColumn(cols[i]);
-			collectionView.addColumn(cols[i]);
-			i++;
-		}
 		collectionView.setModel(collectionViewData);
+		for(String title : c.getProperties().keySet()) {
+			collectionViewData.addColumn(titleCase(title));
+		}
+		collectionViewData.fireTableStructureChanged();
 		for(Item item : c.getItems()) {
 			collectionViewData.addRow(item.getProperties().values().toArray());
 		}
 		collectionViewData.fireTableDataChanged();
+	}
+	
+	/**
+	 * Helper function allows me to convert any arbitrary string to title-case representation
+	 * @param s the string to convert
+	 * @return a converted copy of the string
+	 */
+	private static String titleCase(String s) {
+		StringBuilder rv = new StringBuilder();
+		StringTokenizer strtok = new StringTokenizer(s);
+		// handle the null error: (should really output a runtime warning here)
+		if(s == null) return null;
+		while(strtok.hasMoreTokens()) {
+			String word = strtok.nextToken();
+			String firstLetter = word.substring(0,1);
+			String restOfWord = word.substring(1);
+			rv.append(firstLetter.toUpperCase() + restOfWord.toLowerCase());
+			rv.append(" "); // preserve the tokens that are otherwise stripped
+		}
+		// hack to remove the last space (probably unnecessary for all intents and purposes):
+		rv.setLength(rv.length()-1);
+		return rv.toString();
 	}
 	
 	// FIXME: I'm not happy with the below code, it relies on collections and collectionSelector being sync
