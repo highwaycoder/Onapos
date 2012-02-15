@@ -6,18 +6,25 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -32,6 +39,9 @@ public class OnaposUI {
 	private DefaultListModel collectionSelectorModel;
 	private JTable collectionView;
 	private DefaultTableModel collectionViewData;
+	private JList collectionSelector;
+	private boolean addItemPanelExists;
+	private JPanel addItemPanel;
 	
 	/**
 	 * Launch the application.
@@ -81,6 +91,9 @@ public class OnaposUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new MigLayout());
 		
+		// by default, the add item panel isn't displayed
+		addItemPanelExists = false;
+		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 		
@@ -106,7 +119,7 @@ public class OnaposUI {
 		JLabel collectionSelectorLabel = new JLabel("Collection:");
 		collectionSelectorModel = new DefaultListModel();
 		refreshCollectionList();
-		final JList collectionSelector = new JList(collectionSelectorModel);
+		collectionSelector = new JList(collectionSelectorModel);
 		
 		// this menu item must be created after the collection selector list
 		JMenuItem mntmSaveCollection = new JMenuItem("Save Collection");
@@ -121,15 +134,17 @@ public class OnaposUI {
 			
 			public void valueChanged(ListSelectionEvent arg0) {	
 				Collection c;
-				if((c = getSelectedCollection(collectionSelector)) == null) return; // silent fail (nothing selected)
+				if((c = getSelectedCollection()) == null) return; // silent fail (nothing selected)
 				scl.setCollection(c);
 				populateTable(c);
+				// if it already exists, get rid of it first!
+				if(addItemPanelExists) delItemPanel();
+				addItemPanel();
 			}
 			
 		}
 		
 		collectionSelector.addListSelectionListener(new CollectionSelectionListener());
-		
 		
 		// setup the menu in the proper order:
 		mnFile.add(mntmNewCollection);
@@ -137,11 +152,45 @@ public class OnaposUI {
 		mnFile.add(mntmSaveCollection);
 		mnFile.add(mntmExit);
 
-		
 		frame.add(collectionSelectorLabel);
 		frame.add(collectionSelector);
 		frame.add(new JScrollPane(collectionView));
 		frame.pack();
+	}
+	
+	public void addItemPanel() {
+		if(addItemPanelExists) return; // don't do this more than once
+		addItemPanel = new JPanel();
+		addItemPanel.setLayout(new MigLayout("fillx", "[right]rel[grow,fill]", "[]10[]"));
+		JButton addItemButton = new JButton("Add");
+		Map<JLabel,JTextField> itemProperties = new HashMap<JLabel,JTextField>();
+		Set<String> properties = getSelectedCollection().getProperties().keySet();
+		
+		for(String property : properties) {
+			itemProperties.put(new JLabel(property), new JTextField(20));
+		}
+		
+		for(Entry<JLabel,JTextField> e : itemProperties.entrySet()) {
+			addItemPanel.add(e.getKey(),"");
+			addItemPanel.add(e.getValue(),"wrap");
+		}
+		
+		addItemButton.addActionListener(new AddItemListener(this,itemProperties));
+		
+		addItemPanel.add(addItemButton,"skip, width 80px!");
+		frame.add(addItemPanel);
+		frame.pack();
+		addItemPanelExists = true;
+	}
+	
+	public void delItemPanel() {
+		if(addItemPanel==null) {
+			// obviously, this has happened because the boolean value hasn't been set properly
+			addItemPanelExists = false;
+			return; // our work here is done :)
+		}
+		addItemPanel.removeAll();
+		addItemPanelExists = false;
 	}
 	
 	public void populateTable(Collection c) {
@@ -155,6 +204,7 @@ public class OnaposUI {
 			collectionViewData.addRow(item.getProperties().values().toArray());
 		}
 		collectionViewData.fireTableDataChanged();
+		addItemPanel();
 	}
 	
 	/**
@@ -180,7 +230,7 @@ public class OnaposUI {
 	}
 	
 	// FIXME: I'm not happy with the below code, it relies on collections and collectionSelector being sync
-	public Collection getSelectedCollection(JList collectionSelector) {
+	public Collection getSelectedCollection() {
 		if(collectionSelector.isSelectionEmpty()) {
 			return null; // fail silently if the selection has merely been cleared
 		}
