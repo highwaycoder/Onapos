@@ -150,6 +150,7 @@ public class OnaposUI {
 			cols[i] = new TableColumn();
 			cols[i].setHeaderValue(p.toString());
 			collectionViewData.addColumn(cols[i]);
+			collectionView.addColumn(cols[i]);
 			i++;
 		}
 		collectionView.setModel(collectionViewData);

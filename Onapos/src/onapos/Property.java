@@ -136,7 +136,8 @@ public class Property implements Comparable<Property> {
 		case DOUBLE:
 			return new Double(asDouble).toString();
 		case DATE:
-			return asDate.toString();
+			// allows us to keep a uniform date format across everywhere
+			return CollectionFile.SDF.format(asDate);
 		case BOOLEAN:
 			if(asBoolean) return "yes";
 			else return "no";

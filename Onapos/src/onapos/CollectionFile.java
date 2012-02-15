@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 public class CollectionFile {
 	private File onDisk;
 	private Collection collection;
+	public static DateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
 	public CollectionFile() {
 		
 	}
@@ -186,7 +187,6 @@ public class CollectionFile {
 									p = new Property(Integer.parseInt(propertyString));
 									break;
 								case DATE:
-									DateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
 									try {
 										p = new Property(SDF.parse(propertyString));
 									} catch (ParseException pe) {
