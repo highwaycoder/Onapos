@@ -6,11 +6,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.swing.DefaultListModel;
@@ -172,8 +173,13 @@ public class OnaposUI {
 		addItemPanel = new JPanel();
 		addItemPanel.setLayout(new MigLayout("fillx", "[right]rel[grow,fill]", "[]10[]"));
 		JButton addItemButton = new JButton("Add");
+		
 		Map<JLabel,JTextField> itemProperties = new HashMap<JLabel,JTextField>();
-		Set<String> properties = getSelectedCollection().getProperties().keySet();
+		String[] properties = new String[getSelectedCollection().getProperties().size()];
+		
+		// OH my god what an ugly hack.  Oh well, it works!
+		getSelectedCollection().getProperties().keySet().toArray(properties);
+		Collections.reverse(Arrays.asList(properties));
 		
 		for(String property : properties) {
 			itemProperties.put(new JLabel(property), new JTextField(20));
