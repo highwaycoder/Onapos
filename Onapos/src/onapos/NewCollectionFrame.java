@@ -13,6 +13,10 @@ import net.miginfocom.swing.MigLayout;
 public class NewCollectionFrame {
 	private JFrame frame;
 	
+	/**
+	 * A dialogue box for creating new collections
+	 * @param context the OnaposUI that created this NewCollectionFrame
+	 */
 	public NewCollectionFrame(OnaposUI context) {
 		frame = new JFrame();
 		frame.setBounds(150, 150, 350, 200);

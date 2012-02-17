@@ -24,10 +24,19 @@ public class CollectionFile {
 		
 	}
 	
+	/**
+	 * Constructor for reading collections from disk
+	 * @param infile the file containing the collection
+	 */
 	public CollectionFile(File infile) {
 		onDisk = infile;
 	}
 	
+	/**
+	 * Constructor for writing collections to disk
+	 * @param c the collection to write
+	 * @param outfile the file to write to
+	 */
 	public CollectionFile(Collection c,File outfile) {
 		onDisk = outfile;
 		collection = c;
@@ -75,7 +84,7 @@ public class CollectionFile {
 			buffedWriter.newLine();
 			buffedWriter.write("type:"+collection.getType());
 			buffedWriter.newLine();
-			HashMap<String,Property> properties = collection.getProperties();
+			Map<String,Property> properties = collection.getProperties();
 			for(Entry<String,Property> entry : properties.entrySet()) {
 				buffedWriter.write("field:");
 				buffedWriter.write(entry.getKey());
@@ -131,6 +140,10 @@ public class CollectionFile {
 		}
 	}
 	
+	/**
+	 * Read a collection from disk
+	 * @return the collection we read
+	 */
 	public Collection read() {
 		FileReader reader;
 		BufferedReader buffedReader;

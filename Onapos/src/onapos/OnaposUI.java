@@ -77,9 +77,12 @@ public class OnaposUI {
 		initialize();
 	}
 	
+	/**
+	 * Add a collection to the user interface
+	 * @param c the collection to add
+	 */
 	public void addCollection(Collection c) {
 		collections.add(c);
-		
 	}
 
 	/**
@@ -158,8 +161,14 @@ public class OnaposUI {
 		frame.pack();
 	}
 	
+	/**
+	 * Create the 'add item' panel (so long as it already exists)
+	 */
 	public void addItemPanel() {
-		if(addItemPanelExists) return; // don't do this more than once
+		if(addItemPanelExists) {
+			System.err.println("Warning (inefficiency): called 'addItemPanel()' when one already exists");
+			return; // don't do this more than once
+		}
 		addItemPanel = new JPanel();
 		addItemPanel.setLayout(new MigLayout("fillx", "[right]rel[grow,fill]", "[]10[]"));
 		JButton addItemButton = new JButton("Add");
@@ -183,6 +192,12 @@ public class OnaposUI {
 		addItemPanelExists = true;
 	}
 	
+	/**
+	 * Remove the 'add item' panel from the screen (if no collection is selected)
+	 * NOTE: this function is not currently used, and I'm struggling to think of a
+	 * reason to keep it - it may be deprecated in a future version, unless I make
+	 * use of it.
+	 */
 	public void delItemPanel() {
 		if(addItemPanel==null) {
 			// obviously, this has happened because the boolean value hasn't been set properly
@@ -193,6 +208,10 @@ public class OnaposUI {
 		addItemPanelExists = false;
 	}
 	
+	/**
+	 * Populate the collectionView JTable with items
+	 * @param c the collection with which to populate the table
+	 */
 	public void populateTable(Collection c) {
 		collectionViewData = new DefaultTableModel();
 		collectionView.setModel(collectionViewData);
@@ -229,7 +248,12 @@ public class OnaposUI {
 		return rv.toString();
 	}
 	
-	// FIXME: I'm not happy with the below code, it relies on collections and collectionSelector being sync
+	/**
+	 * Returns whichever collection is currently selected in the list
+	 * FIXME: I'm not happy with this code, it relies on 'collections'
+	 * and 'collectionSelector' being synchronised
+	 * @return the collection the user has selected in the JList
+	 */
 	public Collection getSelectedCollection() {
 		if(collectionSelector.isSelectionEmpty()) {
 			return null; // fail silently if the selection has merely been cleared
@@ -242,20 +266,37 @@ public class OnaposUI {
 		return collections.get(collectionSelector.getSelectedIndex());
 	}
 	
+	/**
+	 * This function refreshes the collection list whenever 'collections' is modified
+	 * TODO: deprecate this (there are more efficient ways to keep them in sync)
+	 */
 	public void refreshCollectionList() {
 		collectionSelectorModel.removeAllElements();
 		for(Collection c : collections) 
 			collectionSelectorModel.addElement(c.getName());
 	}
 	
+	/**
+	 * For some reason, this particular listener is an inner class - I should move it
+	 * into its own file, really.
+	 * @author Chris Browne <yoda2031@gmail.com>
+	 *
+	 */
 	private class NewCollectionListener implements ActionListener {
 		
 		private OnaposUI context;
 		
+		/**
+		 * Creates a listener for the 'new collection' menu item
+		 * @param context the OnaposUI that created this listener
+		 */
 		public NewCollectionListener(OnaposUI context) {
 			this.context = context;
 		}
 		
+		/**
+		 * We create a new collection frame then, when it's disposed, we reload the collections
+		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			new NewCollectionFrame(context);
@@ -269,6 +310,10 @@ public class OnaposUI {
 		}
 	}
 
+	/**
+	 * Loads collections from the disk
+	 * @throws IOException because I hate using try/catch inside methods?
+	 */
 	private void loadCollections() throws IOException {
 		File collectionDir = new File(collectionLocation);
 		File[] collectionFiles = collectionDir.listFiles();

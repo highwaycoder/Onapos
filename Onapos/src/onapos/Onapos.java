@@ -4,10 +4,11 @@ package onapos;
 public class Onapos {
 
 	/**
-	 * @param args
+	 * CLI version of Onapos - currently completely unimplemented
+	 * @param args unused
 	 */
 	public static void main(String[] args) {
-		// TODO: implement alternative version of Onapos (without UI?)
+		// TODO: implement CLI version of Onapos
 		
 	}
 

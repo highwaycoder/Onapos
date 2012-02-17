@@ -9,10 +9,18 @@ public class SaveCollectionListener implements ActionListener {
 
 	private Collection toSave;
 	
+	/**
+	 * Set which collection we want to save (call before saving)
+	 * @param c the collection we want to save
+	 */
 	public void setCollection(Collection c) {
 		toSave = c;
 	}
 	
+	/**
+	 * Save the collection we set earlier (make sure it's set!)
+	 * @param e unused
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(toSave==null) {

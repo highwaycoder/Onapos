@@ -15,12 +15,22 @@ public class AddItemListener implements ActionListener {
 	private Item item;
 	private Map<JLabel,JTextField> properties;
 	
+	/**
+	 * Constructor for the listener
+	 * TODO: rearrange the code so this takes in a Map<String,Property>
+	 * @param c the OnaposUI that created this listener ('context')
+	 * @param ps the properties of the new item (JLabel,JTextField)
+	 */
 	public AddItemListener(OnaposUI c,Map<JLabel,JTextField> ps) {
 		context = c;
 		item = new Item();
 		properties = ps;
 	}
 	
+	/**
+	 * Adds the item to the currently selected collection
+	 * @param e unused
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Collection col = context.getSelectedCollection();
@@ -36,7 +46,13 @@ public class AddItemListener implements ActionListener {
 		context.populateTable(col);
 	}
 	
-	public Property craftProperty(PropertyType t,String v) {
+	/**
+	 * Helper function to create a Property from the PropertyType and String
+	 * @param t the type of property to create
+	 * @param v the String representation of the value of the new Property
+	 * @return the newly-created Property
+	 */
+	private Property craftProperty(PropertyType t,String v) {
 		switch(t) {
 		case STRING:
 			return new Property(v);
