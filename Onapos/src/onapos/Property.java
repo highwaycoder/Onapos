@@ -1,5 +1,6 @@
 package onapos;
 
+import java.text.ParseException;
 import java.util.Date;
 
 // FIXME: this class currently abuses the PropertyException class.
@@ -223,5 +224,34 @@ public class Property implements Comparable<Property> {
 		if(name.equalsIgnoreCase("boolean")) return PropertyType.BOOLEAN;
 		// default to string
 		return PropertyType.STRING;
+	}
+	
+	
+	public boolean equals(String compareTo) {
+		switch(type) {
+		case STRING:
+			return compareTo.equalsIgnoreCase(compareTo);
+		case INTEGER:
+			return Integer.parseInt(compareTo) == asInt;
+		case DOUBLE:
+			return Double.parseDouble(compareTo) == asDouble;
+		case DATE:
+			try {
+				return CollectionFile.SDF.parse(compareTo).equals(asDate);
+			} catch (ParseException e) {
+				// default to comparing as if they're both strings
+				return compareTo.equalsIgnoreCase(compareTo);
+			}
+		case BOOLEAN:
+			if(asBoolean == true) {
+				if(compareTo.equalsIgnoreCase("yes") ||
+						Boolean.parseBoolean(compareTo)) return true;
+			} else {
+				if(compareTo.equalsIgnoreCase("no") ||
+						!Boolean.parseBoolean(compareTo)) return true;
+			} return false;
+		default:
+			return false; // this property is broken
+		}
 	}
 }

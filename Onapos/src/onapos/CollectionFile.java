@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -167,13 +166,15 @@ public class CollectionFile {
 			String collectionName = "Untitled Collection";
 			String collectionType = "Generic";
 			Map<String,PropertyType> properties = new HashMap<String,PropertyType>();
-			List<Item> items = new ArrayList<Item>();
+			collection = new Collection(collectionName,collectionType);
 			while((curLine = buffedReader.readLine()) != null) {
 				if(curLine.trim().startsWith("name:")) {
 					collectionName = curLine.substring(curLine.indexOf(':')+1);
+					collection.setName(collectionName);
 				}
 				if(curLine.trim().startsWith("type:")) {
 					collectionType = curLine.substring(curLine.indexOf(':')+1);
+					collection.setType(collectionType);
 				}
 				if(curLine.trim().startsWith("field:")) {
 					String propertyName = curLine.trim().substring(curLine.trim().indexOf(':')+1,curLine.trim().indexOf(','));
@@ -181,7 +182,7 @@ public class CollectionFile {
 					properties.put(propertyName, Property.getTypeByName(propertyType));
 				}
 				if(curLine.trim().startsWith("item")) {
-					Item curItem = new Item();
+					Item curItem = new Item(collection.generateUID());
 					boolean foundLastBracket = false;
 					while(curLine != null && foundLastBracket == false) {
 						curLine = buffedReader.readLine();
@@ -221,11 +222,9 @@ public class CollectionFile {
 							}
 						}
 					}
-					items.add(curItem);
+					collection.addItem(curItem);
 				}
 			}
-			collection = new Collection(collectionName,collectionType);
-			collection.addItems(items);
 			return collection;
 		} catch(IOException e) {
 			System.err.println("WARNING: exception occurred while reading file:"+onDisk.getName());

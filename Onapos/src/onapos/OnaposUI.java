@@ -173,6 +173,7 @@ public class OnaposUI {
 		addItemPanel = new JPanel();
 		addItemPanel.setLayout(new MigLayout("fillx", "[right]rel[grow,fill]", "[]10[]"));
 		JButton addItemButton = new JButton("Add");
+		JButton delItemButton = new JButton("Delete");
 		
 		Map<JLabel,JTextField> itemProperties = new HashMap<JLabel,JTextField>();
 		String[] properties = new String[getSelectedCollection().getProperties().size()];
@@ -191,11 +192,33 @@ public class OnaposUI {
 		}
 		
 		addItemButton.addActionListener(new AddItemListener(this,itemProperties));
+		delItemButton.addActionListener(new DelItemListener(this));
 		
-		addItemPanel.add(addItemButton,"skip, width 80px!");
+		addItemPanel.add(delItemButton,"width 80px!");
+		addItemPanel.add(addItemButton,"width 80px!");
 		frame.add(addItemPanel);
 		frame.pack();
 		addItemPanelExists = true;
+	}
+	
+	/**
+	 * Gets the currently selected item
+	 * FIXME: currently searches through collectionViewData for the item based on the
+	 * first column.  This may cause problems later with collections that have two
+	 * items with the same first column (we're just -assuming- the user is going to use
+	 * the first column for something like 'title')
+	 * @return the currently selected Item or null if no item is selected
+	 */
+	public Item getSelectedItem() {
+		if(collectionView.getSelectedRow()==-1) return null;
+		String itemSearchField = collectionView.getColumnName(0);
+		Property itemSearchValue = (Property) collectionViewData.getValueAt(collectionView.getSelectedRow(),0);
+		return getSelectedCollection().findItem(itemSearchField,itemSearchValue);
+	}
+	
+	public void removeSelectedRow() {
+		if(collectionView.getSelectedRow()==-1) return;
+		collectionViewData.removeRow(collectionView.getSelectedRow());
 	}
 	
 	/**

@@ -6,12 +6,22 @@ import java.util.Map;
 
 public class Item implements Comparable<Item> {
 	private HashMap<String,Property> properties;
+	int uid;
 	
 	/**
 	 * Constructor, creates a blank Item
+	 * @param uid a unique identifier for this item (used to delete items)
 	 */
-	public Item() {
+	public Item(int uid) {
 		properties = new HashMap<String,Property>();
+	}
+	
+	/**
+	 * Gets the Unique IDentifier for this Item
+	 * @return the UID int
+	 */
+	public int getUID() {
+		return uid;
 	}
 	
 	/**

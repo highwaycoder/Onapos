@@ -23,7 +23,6 @@ public class AddItemListener implements ActionListener {
 	 */
 	public AddItemListener(OnaposUI c,Map<JLabel,JTextField> ps) {
 		context = c;
-		item = new Item();
 		properties = ps;
 	}
 	
@@ -34,6 +33,7 @@ public class AddItemListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Collection col = context.getSelectedCollection();
+		item = new Item(col.generateUID());
 		for(Entry<JLabel,JTextField> entry : properties.entrySet()) {
 			String propertyName = entry.getKey().getText();
 			if(col.getProperties().containsKey(propertyName)) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class Collection {
 	private List<Item> items;
@@ -115,5 +116,67 @@ public class Collection {
 	 */
 	public int numProperties() {
 		return getProperties().size();
+	}
+	
+	/**
+	 * Searches for an item in the collection
+	 * @param searchField the property to search in
+	 * @param searchValue the value to search for
+	 * @return the first Item that matches the description
+	 */
+	public Item findItem(String sf,Property searchValue) {
+		String searchField = sf.toLowerCase(); // make sure we're comparing lower-case versions
+		if(searchValue == null) {
+			System.err.println("Warning: null property in findItem()");
+			return null;
+		}
+		for(Item i : items) {
+			if(i.getProperties().containsKey(searchField)) {
+				if(i.getProperties().get(searchField).equals(searchValue)) return i;
+			}
+		}
+		System.err.println("Warning: item not found");
+		return null;
+	}
+	
+	/**
+	 * Removes a specific Item from this Collection
+	 * Note: if two or more items have the same UID, this function will delete 
+	 * all of them 
+	 * @param uid the unique identifier of the item we want to delete
+	 */
+	public void delItem(int uid) {
+		for(int i=0;i<items.size();i++) {
+			if(items.get(i).getUID() == uid) items.remove(i);
+		}
+	}
+	
+	/**
+	 * Generates a Unique ID for an Item (using a Random)
+	 * @return an integer unique to a single Item in this Collection
+	 */
+	public int generateUID() {
+		int uid = 0;
+		for(Item i : items) {
+			Random r = new Random();
+			if(i.getUID()==uid) uid = r.nextInt();
+		}
+		return uid;
+	}
+	
+	/**
+	 * Sets the collection's name to the parameter specified
+	 * @param to the name to set
+	 */
+	public void setName(String to) {
+		name = to;
+	}
+	
+	/**
+	 * Sets the collection's type to the parameter specified
+	 * @param to the type to set
+	 */
+	public void setType(String to) {
+		type = to;
 	}
 }
