@@ -37,7 +37,7 @@ public class AddItemListener implements ActionListener {
 		for(Entry<JLabel,JTextField> entry : properties.entrySet()) {
 			String propertyName = entry.getKey().getText();
 			if(col.getProperties().containsKey(propertyName)) {
-				PropertyType t = col.getProperties().get(propertyName).getType();
+				PropertyType t = col.getProperties().get(propertyName);
 				Property p = craftProperty(t,entry.getValue().getText());
 				item.addProperty(propertyName, p);
 			}

@@ -8,6 +8,7 @@ import java.util.Random;
 
 public class Collection {
 	private List<Item> items;
+	private Map<String,PropertyType> propertyTemplates;
 	private String name;
 	private String type;
 	
@@ -17,9 +18,19 @@ public class Collection {
 	 * @param collectionName
 	 */
 	public Collection(String collectionName) {
-		name = collectionName;
-		type = "Generic";
-		items = new ArrayList<Item>();
+		this(collectionName,"Generic");
+	}
+	
+	/**
+	 * Adds a property template to the Map of property templates
+	 * @param e the Entry of String,Property to add to the property templates
+	 */
+	public void addProperty(String name,PropertyType type) {
+		if(name == null || type == null) {
+			System.err.println("Error: adding a null property");
+			System.exit(-1);
+		}
+		propertyTemplates.put(name, type);
 	}
 	
 	/**
@@ -31,6 +42,7 @@ public class Collection {
 		name = collectionName;
 		type = collectionType;
 		items = new ArrayList<Item>();
+		propertyTemplates = new HashMap<String,PropertyType>();
 	}
 	
 	/**
@@ -95,11 +107,8 @@ public class Collection {
 	 * Gets a map of the properties that items in this collection have
 	 * @return a Map of String,Property
 	 */
-	public Map<String,Property> getProperties() {
-		if(items.isEmpty())
-			return new HashMap<String,Property>();
-		else
-			return items.get(0).getProperties();
+	public Map<String,PropertyType> getProperties() {
+		return propertyTemplates;
 	}
 	
 	/**

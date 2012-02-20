@@ -83,12 +83,12 @@ public class CollectionFile {
 			buffedWriter.newLine();
 			buffedWriter.write("type:"+collection.getType());
 			buffedWriter.newLine();
-			Map<String,Property> properties = collection.getProperties();
-			for(Entry<String,Property> entry : properties.entrySet()) {
+			Map<String,PropertyType> properties = collection.getProperties();
+			for(Entry<String,PropertyType> entry : properties.entrySet()) {
 				buffedWriter.write("field:");
 				buffedWriter.write(entry.getKey());
 				buffedWriter.append(",");
-				buffedWriter.write(entry.getValue().getTypeAsString());
+				buffedWriter.write(entry.getValue().toString());
 				buffedWriter.newLine();
 			}
 			List<Item> items = collection.getItems();

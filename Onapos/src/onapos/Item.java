@@ -62,7 +62,6 @@ public class Item implements Comparable<Item> {
 	 * @param propertyValue the value of the new property
 	 */
 	public void addProperty(String propertyName,Property propertyValue) {
-		System.out.println(propertyName + ":" + propertyValue);
 		properties.put(propertyName, propertyValue);
 	}
 	
