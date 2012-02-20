@@ -11,8 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 public class CreateCollectionListener implements ActionListener {
-	private String cName;
-	private String cType;
+	private JTextField cNameField;
+	private JTextField cTypeField;
 	private Map<JComboBox,JTextField> fields;
 	private OnaposUI context;
 	private JFrame newCollectionFrame;
@@ -21,8 +21,8 @@ public class CreateCollectionListener implements ActionListener {
 	 * Helper constructor, use if  the collectionType is undefined
 	 * 
 	 */
-	public CreateCollectionListener(String collectionName,Map<JComboBox,JTextField> fields,OnaposUI context,JFrame f) {
-		this(collectionName,"Generic",fields,context,f);
+	public CreateCollectionListener(JTextField collectionName,Map<JComboBox,JTextField> fields,OnaposUI context,JFrame f) {
+		this(collectionName,new JTextField("Generic"),fields,context,f);
 	}
 	
 	/**
@@ -31,9 +31,9 @@ public class CreateCollectionListener implements ActionListener {
 	 * @param collectionType the type of the new collection
 	 * @param context the OnaposUI to add the collection to
 	 */
-	public CreateCollectionListener(String collectionName,String collectionType,Map<JComboBox,JTextField> fields,OnaposUI context,JFrame f) {
-		cName = collectionName;
-		cType = collectionType;
+	public CreateCollectionListener(JTextField collectionName,JTextField collectionType,Map<JComboBox,JTextField> fields,OnaposUI context,JFrame f) {
+		cNameField = collectionName;
+		cTypeField = collectionType;
 		this.fields = fields;
 		this.context = context;
 		newCollectionFrame = f;
@@ -45,7 +45,7 @@ public class CreateCollectionListener implements ActionListener {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		Collection saveCollection = new Collection(cName,cType);
+		Collection saveCollection = new Collection(cNameField.getText(),cTypeField.getText());
 		for(Entry<JComboBox,JTextField> e : fields.entrySet()) {
 			PropertyType type = (PropertyType) e.getKey().getSelectedItem();
 			String name = e.getValue().getText();

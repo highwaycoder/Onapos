@@ -43,7 +43,7 @@ public class NewCollectionFrame {
 		addField.addActionListener(new AddFieldListener(fields));
 		
 		JButton createButton = new JButton("Create");
-		createButton.addActionListener(new CreateCollectionListener(collectionNameField.getText(),collectionTypeField.getText(),fields,context,frame));
+		createButton.addActionListener(new CreateCollectionListener(collectionNameField,collectionTypeField,fields,context,frame));
 		
 		
 		frame.add(collectionNameLabel,"");
