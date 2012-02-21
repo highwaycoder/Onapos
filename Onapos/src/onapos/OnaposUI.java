@@ -150,6 +150,10 @@ public class OnaposUI {
 		
 		collectionSelector.addListSelectionListener(new CollectionSelectionListener());
 		
+
+		addItemPanel = new JPanel();
+		addItemPanel.setLayout(new MigLayout("fillx", "[right]rel[grow,fill]", "[]10[]"));
+		
 		// setup the menu in the proper order:
 		mnFile.add(mntmNewCollection);
 		mnFile.add(mntmOpenCollection);
@@ -159,6 +163,7 @@ public class OnaposUI {
 		frame.add(collectionSelectorLabel);
 		frame.add(collectionSelector);
 		frame.add(new JScrollPane(collectionView));
+		
 		frame.pack();
 	}
 	
@@ -170,8 +175,6 @@ public class OnaposUI {
 			System.err.println("Warning (inefficiency): called 'addItemPanel()' when one already exists");
 			return; // don't do this more than once
 		}
-		addItemPanel = new JPanel();
-		addItemPanel.setLayout(new MigLayout("fillx", "[right]rel[grow,fill]", "[]10[]"));
 		JButton addItemButton = new JButton("Add");
 		JButton delItemButton = new JButton("Delete");
 		
@@ -233,6 +236,7 @@ public class OnaposUI {
 			addItemPanelExists = false;
 			return; // our work here is done :)
 		}
+		frame.remove(addItemPanel);
 		addItemPanel.removeAll();
 		addItemPanelExists = false;
 	}
