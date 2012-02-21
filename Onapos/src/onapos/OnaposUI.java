@@ -141,9 +141,6 @@ public class OnaposUI {
 				if((c = getSelectedCollection()) == null) return; // silent fail (nothing selected)
 				scl.setCollection(c);
 				populateTable(c);
-				// if it already exists, get rid of it first!
-				if(addItemPanelExists) delItemPanel();
-				addItemPanel();
 			}
 			
 		}
@@ -256,7 +253,9 @@ public class OnaposUI {
 			collectionViewData.addRow(item.getProperties().values().toArray());
 		}
 		collectionViewData.fireTableDataChanged();
-		addItemPanel();
+		// don't create an ItemPanel if it already exists
+		if(!addItemPanelExists)
+			addItemPanel();
 	}
 	
 	/**
