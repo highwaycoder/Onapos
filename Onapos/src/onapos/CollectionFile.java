@@ -10,10 +10,12 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 public class CollectionFile {
 	private File onDisk;
@@ -95,6 +97,17 @@ public class CollectionFile {
 			for(Item i : items) {
 				buffedWriter.write("item {");
 				buffedWriter.newLine();
+				// write tags
+				buffedWriter.write("tags:");
+				// keep a reference to the last tag, awbc
+				String lastTag = i.getTags().get(i.getTags().size());
+				for(String tag : i.getTags()) {
+					buffedWriter.write(tag);
+					// use that reference to see if we're on the last tag
+					if(tag == lastTag) break;
+					// print a comma if not
+					buffedWriter.write(',');
+				}
 				for(Entry<String,Property> p : i.getProperties().entrySet()) {
 					buffedWriter.write(p.getKey());
 					buffedWriter.append(":");
@@ -183,6 +196,7 @@ public class CollectionFile {
 				}
 				if(curLine.trim().startsWith("item")) {
 					Item curItem = new Item(collection.generateUID());
+					List<String> tags = new ArrayList<String>();
 					boolean foundLastBracket = false;
 					while(curLine != null && foundLastBracket == false) {
 						curLine = buffedReader.readLine();
@@ -190,6 +204,12 @@ public class CollectionFile {
 							foundLastBracket = true;
 						}
 						for(Entry<String,PropertyType> e : properties.entrySet()) {
+							if(curLine.trim().startsWith("tags")) {
+								StringTokenizer tok = new StringTokenizer(curLine.substring(curLine.indexOf(":")+1),",");
+								while(tok.hasMoreTokens()) {
+									tags.add(tok.nextToken());
+								}
+							}
 							if(curLine.trim().startsWith(e.getKey())) {
 								Property p;
 								String propertyString = curLine.substring(curLine.indexOf(":")+1);
@@ -220,6 +240,7 @@ public class CollectionFile {
 								}
 								curItem.addProperty(e.getKey(),p);
 							}
+							curItem.addTags(tags);
 						}
 					}
 					collection.addItem(curItem);

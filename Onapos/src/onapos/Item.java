@@ -1,11 +1,14 @@
 package onapos;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 public class Item implements Comparable<Item> {
 	private HashMap<String,Property> properties;
+	private List<String> tags;
 	int uid;
 	
 	/**
@@ -14,6 +17,45 @@ public class Item implements Comparable<Item> {
 	 */
 	public Item(int uid) {
 		properties = new HashMap<String,Property>();
+		tags = new ArrayList<String>();
+	}
+	
+	/**
+	 * Checks if this item has a particular tag attached to it or not
+	 * @param tag the tag to check
+	 * @return true if this item has the tag, false otherwise
+	 */
+	public boolean hasTag(String tag) {
+		if(tags.contains(tag.toLowerCase())) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Tags this Item with a particular value
+	 * @param tag the tag to add
+	 */
+	public void addTag(String tag) {
+		tags.add(tag.toLowerCase());
+	}
+	
+	/**
+	 * Allows access to all of this item's tags at once
+	 * @return the List(String) of tags attached to this Item
+	 */
+	public List<String> getTags() {
+		return tags;
+	}
+	
+	/**
+	 * Adds a number of 'tags' at once to the Item
+	 * @param t the List of Strings that contains the tags
+	 */
+	public void addTags(List<String> t) {
+		for(String tag : t) {
+			tags.add(tag.toLowerCase());
+		}
 	}
 	
 	/**
