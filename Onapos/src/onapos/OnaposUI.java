@@ -94,6 +94,7 @@ public class OnaposUI {
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new MigLayout());
+		frame.setTitle("Onapos - a simple collections manager");
 		
 		// by default, the add item panel isn't displayed
 		addItemPanelExists = false;

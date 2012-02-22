@@ -27,6 +27,7 @@ public class NewCollectionFrame {
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setVisible(true);
 		frame.setLayout(new MigLayout("wrap", "[grow][][]", ""));
+		frame.setTitle("New Collection");
 
 		JTextField collectionNameField = new JTextField(20);
 		JTextField collectionTypeField = new JTextField(20);
