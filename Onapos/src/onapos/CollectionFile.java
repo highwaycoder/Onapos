@@ -225,6 +225,7 @@ public class CollectionFile {
 					collection.addItem(curItem);
 				}
 			}
+			collection.addProperties(properties);
 			return collection;
 		} catch(IOException e) {
 			System.err.println("WARNING: exception occurred while reading file:"+onDisk.getName());

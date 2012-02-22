@@ -34,6 +34,15 @@ public class Collection {
 	}
 	
 	/**
+	 * Allows access to the putAll() method of the propertyTemplates field
+	 * from outside the class
+	 * @param p passed in as the first argument to putAll()
+	 */
+	public void addProperties(Map<String,PropertyType> p) {
+		propertyTemplates.putAll(p);
+	}
+	
+	/**
 	 * Constructor for creating collections with a type
 	 * @param collectionName the name of the new collection (eg 'Favourite Movies', 'Books I own')
 	 * @param collectionType the type of collection (eg 'Movies', 'Books', etc.)
