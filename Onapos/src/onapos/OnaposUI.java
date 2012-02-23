@@ -33,7 +33,8 @@ import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
 public class OnaposUI {
-	public static final String DEFAULT_COLLECTION_LOCATION = "/usr/share/onapos/collections/";
+	public static final String DEFAULT_COLLECTION_LOCATION = System.getenv("$HOME") + ".onapos/collections/";
+	public static final String FILE_EXTENSION = ".ms";
 	private static String collectionLocation;
 	private JFrame frame;
 	private List<Collection> collections;
@@ -54,13 +55,9 @@ public class OnaposUI {
 			collectionLocation = args[1];
 		}
 		EventQueue.invokeLater(new Runnable() {
+			private OnaposUI window = new OnaposUI();
 			public void run() {
-				try {
-					OnaposUI window = new OnaposUI();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				window.initialize();
 			}
 		});
 	}
@@ -75,7 +72,6 @@ public class OnaposUI {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
-		initialize();
 	}
 	
 	/**
@@ -92,9 +88,11 @@ public class OnaposUI {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setLayout(new MigLayout());
 		frame.setTitle("Onapos - a simple collections manager");
+		frame.setVisible(true);
+		frame.addWindowListener(new OnaposWindowListener(this));
 		
 		// by default, the add item panel isn't displayed
 		addItemPanelExists = false;
@@ -115,9 +113,9 @@ public class OnaposUI {
 		mntmExit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// leave this as frame.dispose(), calling exit() directly isn't
+				// as sensible as it first seemed.
 				frame.dispose();
-				// FIXME: makes it exit faster? (danger, will robinson!)
-				System.exit(0);
 			}
 		});
 		
@@ -207,7 +205,9 @@ public class OnaposUI {
 	 * FIXME: currently searches through collectionViewData for the item based on the
 	 * first column.  This may cause problems later with collections that have two
 	 * items with the same first column (we're just -assuming- the user is going to use
-	 * the first column for something like 'title')
+	 * the first column for something like 'title', and that column is going to be a uid)
+	 * NOTE: the fix might involve the newly created Item.uid field, but I'm still not
+	 * sure how to implement it.
 	 * @return the currently selected Item or null if no item is selected
 	 */
 	public Item getSelectedItem() {
@@ -217,6 +217,12 @@ public class OnaposUI {
 		return getSelectedCollection().findItem(itemSearchField,itemSearchValue);
 	}
 	
+	/**
+	 * Removes the selected row from the collectionView table,
+	 * Note that this doesn't actually remove an item from the collection,
+	 * it's just a helper function to clean up the collectionView table
+	 * after removing an item.
+	 */
 	public void removeSelectedRow() {
 		if(collectionView.getSelectedRow()==-1) return;
 		collectionViewData.removeRow(collectionView.getSelectedRow());
@@ -337,7 +343,6 @@ public class OnaposUI {
 			try {
 				loadCollections();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -349,6 +354,15 @@ public class OnaposUI {
 	 */
 	private void loadCollections() throws IOException {
 		File collectionDir = new File(collectionLocation);
+		if(!collectionDir.exists()) {
+			System.err.print("WARNING: collection directory does not exist, trying to create: ");
+			if(!collectionDir.mkdirs()) {
+				System.err.println("failure");
+				System.err.println("proceding without existing collections");
+			} else {
+				System.err.println("success");
+			}
+		}
 		File[] collectionFiles = collectionDir.listFiles();
 		if(collectionFiles == null) {
 			System.err.println("WARNING: collection directory could not be read, does not exist");
@@ -362,6 +376,29 @@ public class OnaposUI {
 			CollectionFile cf = new CollectionFile(collectionFile);
 			collections.add(cf.read());
 		}
+	}
+	
+	/**
+	 * Helper method to save all our collections at once
+	 */
+	private void saveCollections() {
+		for(Collection c : collections) {
+			File saveLocation = new File(DEFAULT_COLLECTION_LOCATION + c.getName() + FILE_EXTENSION);
+			CollectionFile cf = new CollectionFile(c,saveLocation);
+			cf.write();
+		}
+	}
+	
+	/**
+	 * Clean up and close (auto-saving along the way)
+	 * NOTE: DO NOT CALL THIS FROM ANYWHERE OTHER THAN
+	 * OnaposWindowListener.windowClosed().
+	 * SERIOUSLY.
+	 * It's supposed to happen whenever the frame is disposed, and not any other place
+	 */
+	public void exit() {
+		saveCollections();
+		System.exit(0);
 	}
 	
 }

@@ -21,9 +21,17 @@ public class CollectionFile {
 	private File onDisk;
 	private Collection collection;
 	public static DateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
-	public CollectionFile() {
-		
-	}
+	
+	/**
+	 * This constructor should never have existed, but since it did
+	 * and the code was public while it did, I shouldn't just remove it
+	 * entirely.
+	 * Every time you use this constructor, God kills a kitten.
+	 * No, really, you get bugs.  So don't.
+	 * @deprecated seriously, don't use it!
+	 */
+	@Deprecated
+	public CollectionFile() {}
 	
 	/**
 	 * Constructor for reading collections from disk
@@ -62,11 +70,12 @@ public class CollectionFile {
 			try {
 				onDisk.createNewFile();
 			} catch (IOException e) {
-				System.err.println("WARNING: collection file not saved (could not create file): "+onDisk.getName());
+				System.err.println("WARNING: collection file not saved (could not create file): "+onDisk.getAbsolutePath());
+				return;
 			}
 		}
 		if(!onDisk.canWrite()) {
-			System.err.println("WARNING: collection file not saved (could not open file for writing): "+onDisk.getName());
+			System.err.println("WARNING: collection file not saved (could not open file for writing): "+onDisk.getAbsolutePath());
 			return;
 		}
 		if(onDisk.isDirectory()) {
@@ -77,7 +86,7 @@ public class CollectionFile {
 			writer = new FileWriter(onDisk);
 			buffedWriter = new BufferedWriter(writer);
 		} catch (IOException e) {
-			System.err.println("WARNING: file deleted before we could write to it: "+onDisk.getName());
+			System.err.println("WARNING: file deleted before we could write to it: "+onDisk.getAbsolutePath());
 			return;
 		}
 		try {
