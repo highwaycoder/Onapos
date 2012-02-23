@@ -80,6 +80,11 @@ public class OnaposUI {
 	 */
 	public void addCollection(Collection c) {
 		collections.add(c);
+		collectionSelectorModel.addElement(c.getName());
+		if(collectionSelector!=null) {
+			collectionSelector.invalidate();
+			collectionSelector.repaint();
+		}
 	}
 
 	/**
@@ -310,9 +315,13 @@ public class OnaposUI {
 	 * TODO: deprecate this (there are more efficient ways to keep them in sync)
 	 */
 	public void refreshCollectionList() {
-		collectionSelectorModel.removeAllElements();
+		collectionSelectorModel.clear();
 		for(Collection c : collections) 
 			collectionSelectorModel.addElement(c.getName());
+		if(collectionSelector!=null) {
+			collectionSelector.invalidate();
+			collectionSelector.repaint();
+		}
 	}
 	
 	/**

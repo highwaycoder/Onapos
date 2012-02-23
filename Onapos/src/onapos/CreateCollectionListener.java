@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 
@@ -51,13 +50,7 @@ public class CreateCollectionListener implements ActionListener {
 			String name = e.getValue().getText();
 			saveCollection.addProperty(name, type);
 		}
-		JFileChooser fc = new JFileChooser();
-		fc.showSaveDialog(null);
-		CollectionFile saveFile = new CollectionFile(saveCollection,fc.getSelectedFile());
-		
-		saveFile.write();
 		context.addCollection(saveCollection);
-		context.refreshCollectionList();
 		newCollectionFrame.dispose();
 	}
 
