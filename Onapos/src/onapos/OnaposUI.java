@@ -33,7 +33,7 @@ import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
 public class OnaposUI {
-	public static final String DEFAULT_COLLECTION_LOCATION = System.getenv("$HOME") + ".onapos/collections/";
+	public static final String DEFAULT_COLLECTION_LOCATION = System.getenv("HOME") + ".onapos/collections/";
 	public static final String FILE_EXTENSION = ".ms";
 	private static String collectionLocation;
 	private JFrame frame;
