@@ -1,0 +1,16 @@
+== Version 0.3 ==
+ - #17 added 'delete collection' functionality
+
+== Version 0.2 ==
+ - #9 fixed bug where collections were saved without a name/type
+ - #8 fixed bug where selecting a collection caused the 'add item' panel to grow
+ - #10 fixed minor inefficiency bug
+ - #15 fixed regressiong bug where collections weren't loaded properly
+ - #16 added auto-save feature (on exit)
+ - #14 fixed bug where collection list was becoming corrupted in certain circumstances
+
+== Version 0.1 ==
+ - #7 Improved "new collection" dialogue
+
+== Version 0 ==
+Initial release version of the software
