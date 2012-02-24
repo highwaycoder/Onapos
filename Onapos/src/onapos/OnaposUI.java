@@ -23,6 +23,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -33,7 +34,7 @@ import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
 public class OnaposUI {
-	public static final String DEFAULT_COLLECTION_LOCATION = System.getenv("HOME") + ".onapos/collections/";
+	public static final String DEFAULT_COLLECTION_LOCATION = System.getenv("HOME") + "/.onapos/collections/";
 	public static final String FILE_EXTENSION = ".ms";
 	private static String collectionLocation;
 	private JFrame frame;
@@ -128,6 +129,11 @@ public class OnaposUI {
 		collectionSelectorModel = new DefaultListModel();
 		refreshCollectionList();
 		collectionSelector = new JList(collectionSelectorModel);
+		JPopupMenu collectionMenu = new JPopupMenu();
+		JMenuItem deleteCollection = new JMenuItem("Delete Collection");
+		collectionMenu.add(deleteCollection);
+		deleteCollection.addActionListener(new DeleteCollectionListener(this));
+		collectionSelector.addMouseListener(new CollectionSelectorMouseListener(collectionMenu,collectionSelector));
 		
 		// this menu item must be created after the collection selector list
 		JMenuItem mntmSaveCollection = new JMenuItem("Save Collection");
@@ -408,6 +414,27 @@ public class OnaposUI {
 	public void exit() {
 		saveCollections();
 		System.exit(0);
+	}
+	
+	/**
+	 * Deletes a collection from both the disk and the UI
+	 * @param selectedCollection the collection to delete
+	 */
+	public void deleteCollection(Collection selectedCollection) {
+		// first delete from disk
+		File onDisk = new File(DEFAULT_COLLECTION_LOCATION + selectedCollection.getName() + FILE_EXTENSION);
+		if(!onDisk.delete()) {
+			System.err.println("Warning: did not delete file (does not exist?): "+onDisk.getAbsolutePath());
+		}
+		// then from the UI
+		collections.remove(selectedCollection);
+		if(!collectionSelectorModel.removeElement(selectedCollection.getName())){
+			System.err.println("Warning: Tried to remove collection that didn't exist.");
+		}
+		if(collectionSelector!=null) {
+			collectionSelector.validate();
+			collectionSelector.repaint();
+		}
 	}
 	
 }
