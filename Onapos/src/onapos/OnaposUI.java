@@ -204,8 +204,9 @@ public class OnaposUI {
 		addItemButton.addActionListener(new AddItemListener(this,itemProperties));
 		delItemButton.addActionListener(new DelItemListener(this));
 		
-		addItemPanel.add(delItemButton,"width 80px!");
-		addItemPanel.add(addItemButton,"width 80px!");
+		
+		addItemPanel.add(addItemButton,"skip,width 80px!");
+		addItemPanel.add(delItemButton,"");
 		frame.add(addItemPanel);
 		frame.pack();
 		addItemPanelExists = true;
