@@ -6,58 +6,103 @@ import java.util.Date;
 // FIXME: this class currently abuses the PropertyException class.
 
 public class Property implements Comparable<Property> {
-	private String asString;
-	private int asInt;
-	private double asDouble;
-	private Date asDate;
+	// in future, this whole class should be re-implemented as one that's a lot
+	// less finicky, like so:
+	private Object value;
 	private PropertyType type;
-	private boolean asBoolean;
+	private int priority;
+	
+	/**
+	 * Preferred constructor, creates a property of the given type with the given value
+	 * @param type the type of the property
+	 * @param value the value of the property
+	 */
+	public Property(PropertyType type,Object v) {
+		this.type = type;
+		switch(type) {
+		case BOOLEAN:
+			if(v instanceof Boolean) value = (Boolean) v;
+			else if(v instanceof String) value = Boolean.parseBoolean((String) v);
+			break;
+		case DATE:
+			if(v instanceof Date) value = (Date) v;
+			else if(v instanceof String)
+				try {
+					value = Onapos.SDF.parse((String) v);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			break;
+		case DOUBLE:
+			if(v instanceof Double) value = (Double) v;
+			else if (v instanceof String) value = Double.parseDouble((String) v);
+			break;
+		case INTEGER:
+			if(v instanceof Integer) value = (Integer) v;
+			else if (value instanceof String) value = Integer.parseInt((String) v);
+			break;
+		case STRING:
+			if(v instanceof String) value = (String) v;
+			break;
+		default:
+			break;
+		}
+	}
 	
 	/**
 	 * Creates a new property of type STRING
-	 * @param value the value of the new property
+	 * @param v the value of the new property
+	 * @deprecated use Property(PropertyType,Object) instead
 	 */
-	public Property(String value) {
+	public Property(String v) {
 		type = PropertyType.STRING;
-		asString = value;
+		value = v;
 	}
 	
 	/**
 	 * Creates a new property of type INTEGER
-	 * @param value the value of the new property
+	 * @param v the value of the new property
+	 * @deprecated use Property(PropertyType,Object) instead
 	 */
-	public Property(int value) {
+	public Property(int v) {
 		type = PropertyType.INTEGER;
-		asInt = value;
+		value = v;
 	}
 	
 	/**
 	 * Creates a new property of type DOUBLE
-	 * @param value the value of the new property
+	 * @param v the value of the new property
+	 * @deprecated use Property(PropertyType,Object) instead
 	 */
-	public Property(double value) {
+	public Property(double v) {
 		type = PropertyType.DOUBLE;
-		asDouble = value;
+		value = v;
 	}
 	
 	/**
 	 * Creates a new property of type DATE
-	 * @param value the value of the new property
+	 * @param v the value of the new property
+	 * @deprecated use Property(PropertyType,Object) instead
 	 */
-	public Property(Date value) {
+	public Property(Date v) {
 		type = PropertyType.DATE;
-		asDate = value;
+		value = v;
 	}
 	
 	/**
 	 * Creates a new property of type BOOLEAN
 	 * @param value the value of the new property
+	 * @deprecated use Property(PropertyType,Object) instead
 	 */
-	public Property(boolean value) {
+	public Property(boolean v) {
 		type = PropertyType.BOOLEAN;
-		asBoolean = value;
+		value = v;
 	}
 	
+	/**
+	 * @deprecated should never have existed (don't know why I made it)
+	 */
 	@Deprecated
 	public Property() {
 		// That's a BAD programmer!  BAD!
@@ -75,31 +120,31 @@ public class Property implements Comparable<Property> {
 		switch(type) {
 		case STRING:
 			try {
-				return arg0.getString().compareTo(asString);
+				return arg0.getString().compareTo((String)value);
 			} catch(PropertyException e) {
 				System.err.println("WARNING: not a string (comparison failed)");
 			}
 		case INTEGER:
 			try {
-				return asInt - arg0.getInt(); // returns + if this int is higher, - otherwise (0 if equal)
+				return (Integer) value - arg0.getInt(); // returns + if this int is higher, - otherwise (0 if equal)
 			} catch(PropertyException e) {
 				System.err.println("WARNING: not an int (comparison failed)");
 			}
 		case DOUBLE:
 			try {
-				return (int)Math.floor(asDouble - arg0.getDouble());
+				return (int)Math.floor((Double) value - arg0.getDouble());
 			} catch(PropertyException e) {
 				System.err.println("WARNING: not a double (comparison failed)");
 			}
 		case DATE:
 			try {
-				return asDate.compareTo(arg0.getDate());
+				return ((Date)value).compareTo(arg0.getDate());
 			} catch(PropertyException e) {
 				System.err.println("WARNING: not a date (comparison failed)");
 			}
 		case BOOLEAN:
 			try {
-				return new Boolean(asBoolean).compareTo(arg0.getBoolean());
+				return ((Boolean)value).compareTo(arg0.getBoolean());
 			} catch(PropertyException e) {
 				System.err.println("WARNING: not a boolean (comparison failed)");
 			}
@@ -108,6 +153,7 @@ public class Property implements Comparable<Property> {
 			return 0;
 		}
 	}
+	
 	/**
 	 * Gets the property value as a boolean
 	 * @return the value as a boolean
@@ -115,7 +161,7 @@ public class Property implements Comparable<Property> {
 	 */
 	public boolean getBoolean() throws PropertyException {
 		if(type != PropertyType.BOOLEAN) throw new PropertyException();
-		else return asBoolean;
+		else return (Boolean)value;
 	}
 
 	/**
@@ -125,7 +171,7 @@ public class Property implements Comparable<Property> {
 	 */
 	public String getString() throws PropertyException {
 		if(type != PropertyType.STRING) throw new PropertyException();
-		else return asString;
+		else return (String)value;
 	}
 	
 	/**
@@ -135,7 +181,7 @@ public class Property implements Comparable<Property> {
 	 */
 	public int getInt() throws PropertyException {
 		if(type != PropertyType.INTEGER) throw new PropertyException();
-		else return asInt;
+		else return (Integer)value;
 	}
 	
 	/**
@@ -145,7 +191,7 @@ public class Property implements Comparable<Property> {
 	 */
 	public double getDouble() throws PropertyException {
 		if(type != PropertyType.DOUBLE) throw new PropertyException();
-		else return asDouble;
+		else return (Double)value;
 	}
 	
 	/**
@@ -155,7 +201,7 @@ public class Property implements Comparable<Property> {
 	 */
 	public Date getDate() throws PropertyException {
 		if(type != PropertyType.DATE) throw new PropertyException();
-		else return asDate;
+		else return (Date)value;
 	}
 	
 	/**
@@ -193,22 +239,8 @@ public class Property implements Comparable<Property> {
 	 */
 	@Override
 	public String toString() {
-		switch(type) {
-		case STRING:
-			return asString;
-		case INTEGER:
-			return new Integer(asInt).toString();
-		case DOUBLE:
-			return new Double(asDouble).toString();
-		case DATE:
-			// allows us to keep a uniform date format across everywhere
-			return CollectionFile.SDF.format(asDate);
-		case BOOLEAN:
-			if(asBoolean) return "yes";
-			else return "no";
-		default:
-			return "corrupted";
-		}
+		// this should work for pretty much any Object
+		return value.toString();
 	}
 	
 	/**
@@ -230,20 +262,20 @@ public class Property implements Comparable<Property> {
 	public boolean equals(String compareTo) {
 		switch(type) {
 		case STRING:
-			return compareTo.equalsIgnoreCase(compareTo);
+			return compareTo.equalsIgnoreCase((String)value);
 		case INTEGER:
-			return Integer.parseInt(compareTo) == asInt;
+			return Integer.parseInt(compareTo) == (Integer)value;
 		case DOUBLE:
-			return Double.parseDouble(compareTo) == asDouble;
+			return Double.parseDouble(compareTo) == (Double)value;
 		case DATE:
 			try {
-				return CollectionFile.SDF.parse(compareTo).equals(asDate);
+				return Onapos.SDF.parse(compareTo).equals((Date)value);
 			} catch (ParseException e) {
 				// default to comparing as if they're both strings
 				return compareTo.equalsIgnoreCase(compareTo);
 			}
 		case BOOLEAN:
-			if(asBoolean == true) {
+			if((Boolean)value == true) {
 				if(compareTo.equalsIgnoreCase("yes") ||
 						Boolean.parseBoolean(compareTo)) return true;
 			} else {
@@ -253,5 +285,31 @@ public class Property implements Comparable<Property> {
 		default:
 			return false; // this property is broken
 		}
+	}
+
+	/**
+	 * How far left does this property go?
+	 * @return an integer, the lower the integer, the further left it goes
+	 */
+	public int getPriority() {
+		return priority;
+	}
+
+	/**
+	 * Sets how far left this property should go
+	 * @param priority the lower this number is, the further left it will be
+	 */
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
+	/**
+	 * Creates a template property of the given type and returns it
+	 * @param type
+	 * @return a template property
+	 */
+	public static Property getTemplateOfType(PropertyType type) {
+		// FIXME: this might present problems when the code is more mature
+		return new Property(type,null);
 	}
 }
