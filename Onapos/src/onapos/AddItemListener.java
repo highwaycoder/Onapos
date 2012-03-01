@@ -63,7 +63,7 @@ public class AddItemListener implements ActionListener {
 		case DATE:
 			// allows us to keep a uniform date format across everywhere
 			try {
-				return new Property(CollectionFile.SDF.parse(v));
+				return new Property(Onapos.SDF.parse(v));
 			} catch (ParseException e) {
 				// continue as before, parsing as string (issue warning too)
 				System.err.println("WARNING: date object unrecognised, parsing as string");

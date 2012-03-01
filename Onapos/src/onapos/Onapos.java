@@ -1,15 +1,9 @@
 package onapos;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 
 public class Onapos {
-
-	/**
-	 * CLI version of Onapos - currently completely unimplemented
-	 * @param args unused
-	 */
-	public static void main(String[] args) {
-		// TODO: implement CLI version of Onapos
-		
-	}
-
+	public static DateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
 }

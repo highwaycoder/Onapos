@@ -7,9 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +18,6 @@ import java.util.StringTokenizer;
 public class CollectionFile {
 	private File onDisk;
 	private Collection collection;
-	public static DateFormat SDF = new SimpleDateFormat("dd/MM/yyyy");
 	
 	/**
 	 * This constructor should never have existed, but since it did
@@ -231,7 +228,7 @@ public class CollectionFile {
 									break;
 								case DATE:
 									try {
-										p = new Property(SDF.parse(propertyString));
+										p = new Property(Onapos.SDF.parse(propertyString));
 									} catch (ParseException pe) {
 										System.err.println("WARNING: Date could not be parsed, storing as String instead");
 										p = new Property(propertyString);
