@@ -105,14 +105,21 @@ public class CollectionFile {
 				buffedWriter.newLine();
 				// write tags
 				buffedWriter.write("tags:");
-				// keep a reference to the last tag, awbc
-				String lastTag = i.getTags().get(i.getTags().size());
-				for(String tag : i.getTags()) {
-					buffedWriter.write(tag);
-					// use that reference to see if we're on the last tag
-					if(tag == lastTag) break;
-					// print a comma if not
-					buffedWriter.write(',');
+				if(i.getTags().size() == 0) {
+					if(Onapos.DEBUG_MODE) {
+						System.err.println("Warning: Item with no tags attached being saved");
+					}
+				}
+				else {
+					// keep a reference to the last tag, awbc
+					String lastTag = i.getTags().get(i.getTags().size());
+					for(String tag : i.getTags()) {
+						buffedWriter.write(tag);
+						// use that reference to see if we're on the last tag
+						if(tag == lastTag) break;
+						// print a comma if not
+						buffedWriter.write(',');
+					}
 				}
 				for(Entry<String,Property> p : i.getProperties().entrySet()) {
 					buffedWriter.write(p.getKey());
@@ -221,27 +228,27 @@ public class CollectionFile {
 								String propertyString = curLine.substring(curLine.indexOf(":")+1);
 								switch(e.getValue()) {
 								case STRING:
-									p = new Property(propertyString);
+									p = new Property(e.getValue(),propertyString);
 									break;
 								case INTEGER:
-									p = new Property(Integer.parseInt(propertyString));
+									p = new Property(e.getValue(),Integer.parseInt(propertyString));
 									break;
 								case DATE:
 									try {
-										p = new Property(Onapos.SDF.parse(propertyString));
+										p = new Property(e.getValue(),Onapos.SDF.parse(propertyString));
 									} catch (ParseException pe) {
 										System.err.println("WARNING: Date could not be parsed, storing as String instead");
-										p = new Property(propertyString);
+										p = new Property(e.getValue(),propertyString);
 									}
 									break;
 								case DOUBLE:
-									p = new Property(Double.parseDouble(propertyString));
+									p = new Property(e.getValue(),Double.parseDouble(propertyString));
 									break;
 								case BOOLEAN:
-									p = new Property(Boolean.parseBoolean(propertyString));
+									p = new Property(e.getValue(),Boolean.parseBoolean(propertyString));
 									break;
 								default:
-									p = new Property(propertyString);
+									p = new Property(e.getValue(),propertyString);
 									break;
 								}
 								curItem.addProperty(e.getKey(),p);

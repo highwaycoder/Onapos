@@ -55,26 +55,26 @@ public class AddItemListener implements ActionListener {
 	private Property craftProperty(PropertyType t,String v) {
 		switch(t) {
 		case STRING:
-			return new Property(v);
+			return new Property(t,v);
 		case INTEGER:
-			return new Property(Integer.parseInt(v));
+			return new Property(t,Integer.parseInt(v));
 		case DOUBLE:
-			return new Property(Double.parseDouble(v));
+			return new Property(t,Double.parseDouble(v));
 		case DATE:
 			// allows us to keep a uniform date format across everywhere
 			try {
-				return new Property(Onapos.SDF.parse(v));
+				return new Property(t,Onapos.SDF.parse(v));
 			} catch (ParseException e) {
 				// continue as before, parsing as string (issue warning too)
 				System.err.println("WARNING: date object unrecognised, parsing as string");
-				return new Property(v);
+				return new Property(t,v);
 			}
 		case BOOLEAN:
-			if(v.toLowerCase().equals("yes") || v.toLowerCase().equals("true")) return new Property(true);
-			return new Property(false);
+			if(v.toLowerCase().equals("yes") || v.toLowerCase().equals("true")) return new Property(t,true);
+			return new Property(t,false);
 		default:
 			// parse it as string if all else fails
-			return new Property(v);
+			return new Property(t,v);
 		}
 	}
 
