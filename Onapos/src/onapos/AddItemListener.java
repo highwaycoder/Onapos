@@ -66,7 +66,9 @@ public class AddItemListener implements ActionListener {
 				return new Property(t,Onapos.SDF.parse(v));
 			} catch (ParseException e) {
 				// continue as before, parsing as string (issue warning too)
-				System.err.println("WARNING: date object unrecognised, parsing as string");
+				if(Onapos.DEBUG_MODE) {
+					System.err.println("WARNING: date object unrecognised, parsing as string");
+				}
 				return new Property(t,v);
 			}
 		case BOOLEAN:

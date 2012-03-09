@@ -24,7 +24,9 @@ public class SaveCollectionListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(toSave==null) {
-			System.err.println("Warning: tried to save nothing (nothing selected?)");
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("Warning: tried to save nothing (nothing selected?)");
+			}
 			return;
 		}
 		JFileChooser fc = new JFileChooser();

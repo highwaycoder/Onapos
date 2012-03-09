@@ -101,16 +101,6 @@ public class Property implements Comparable<Property> {
 	}
 	
 	/**
-	 * @deprecated should never have existed (don't know why I made it)
-	 */
-	@Deprecated
-	public Property() {
-		// That's a BAD programmer!  BAD!
-		System.err.println("Error: naked property created (this would cause massive problems later)");
-		System.exit(0);
-	}
-	
-	/**
 	 * Compares this property to another property
 	 * TODO: allow comparison between different types of property
 	 * @param arg0 the property to compare this one to
@@ -122,13 +112,17 @@ public class Property implements Comparable<Property> {
 			try {
 				return arg0.getString().compareTo((String)value);
 			} catch(PropertyException e) {
-				System.err.println("WARNING: not a string (comparison failed)");
+				if(Onapos.DEBUG_MODE) {
+					System.err.println("WARNING: not a string (comparison failed)");
+				}
 			}
 		case INTEGER:
 			try {
 				return (Integer) value - arg0.getInt(); // returns + if this int is higher, - otherwise (0 if equal)
 			} catch(PropertyException e) {
-				System.err.println("WARNING: not an int (comparison failed)");
+				if(Onapos.DEBUG_MODE) {
+					System.err.println("WARNING: not an int (comparison failed)");
+				}
 			}
 		case DOUBLE:
 			try {
@@ -140,16 +134,22 @@ public class Property implements Comparable<Property> {
 			try {
 				return ((Date)value).compareTo(arg0.getDate());
 			} catch(PropertyException e) {
-				System.err.println("WARNING: not a date (comparison failed)");
+				if(Onapos.DEBUG_MODE) {
+					System.err.println("WARNING: not a date (comparison failed)");
+				}
 			}
 		case BOOLEAN:
 			try {
 				return ((Boolean)value).compareTo(arg0.getBoolean());
 			} catch(PropertyException e) {
-				System.err.println("WARNING: not a boolean (comparison failed)");
+				if(Onapos.DEBUG_MODE) {
+					System.err.println("WARNING: not a boolean (comparison failed)");
+				}
 			}
 		default:
-			System.err.println("WARNING: compared a broken Property");
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("WARNING: compared a broken Property");
+			}
 			return 0;
 		}
 	}

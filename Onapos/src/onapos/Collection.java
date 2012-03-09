@@ -27,7 +27,9 @@ public class Collection {
 	 */
 	public void addProperty(String name,PropertyType type) {
 		if(name == null || type == null) {
-			System.err.println("Error: adding a null property");
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("Error: adding a null property");
+			}
 			System.exit(-1);
 		}
 		propertyTemplates.put(name, type);
@@ -145,7 +147,9 @@ public class Collection {
 	public Item findItem(String sf,Property searchValue) {
 		String searchField = sf.toLowerCase(); // make sure we're comparing lower-case versions
 		if(searchValue == null) {
-			System.err.println("Warning: null property in findItem()");
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("Warning: null property in findItem()");
+			}
 			return null;
 		}
 		for(Item i : items) {
@@ -153,7 +157,9 @@ public class Collection {
 				if(i.getProperties().get(searchField).equals(searchValue)) return i;
 			}
 		}
-		System.err.println("Warning: item not found");
+		if(Onapos.DEBUG_MODE) {
+			System.err.println("Warning: item not found");
+		}
 		return null;
 	}
 	

@@ -74,7 +74,9 @@ public class Item implements Comparable<Item> {
 	@Override
 	public int compareTo(Item arg0) {
 		// TODO: some default way of sorting, perhaps?
-		System.err.println("Warning (deprecation): compareTo(Item arg0) is deprecated");
+		if(Onapos.DEBUG_MODE) {
+			System.err.println("Warning (deprecation): compareTo(Item arg0) is deprecated");
+		}
 		return 0;
 	}
 	

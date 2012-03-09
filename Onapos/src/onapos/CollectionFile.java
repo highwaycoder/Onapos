@@ -67,23 +67,31 @@ public class CollectionFile {
 			try {
 				onDisk.createNewFile();
 			} catch (IOException e) {
-				System.err.println("WARNING: collection file not saved (could not create file): "+onDisk.getAbsolutePath());
+				if(Onapos.DEBUG_MODE) {
+					System.err.println("WARNING: collection file not saved (could not create file): "+onDisk.getAbsolutePath());
+				}
 				return;
 			}
 		}
 		if(!onDisk.canWrite()) {
-			System.err.println("WARNING: collection file not saved (could not open file for writing): "+onDisk.getAbsolutePath());
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("WARNING: collection file not saved (could not open file for writing): "+onDisk.getAbsolutePath());
+			}
 			return;
 		}
 		if(onDisk.isDirectory()) {
-			System.err.println("WARNING: collection file not saved (tried to save as directory)");
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("WARNING: collection file not saved (tried to save as directory)");
+			}
 			return;
 		}
 		try {
 			writer = new FileWriter(onDisk);
 			buffedWriter = new BufferedWriter(writer);
 		} catch (IOException e) {
-			System.err.println("WARNING: file deleted before we could write to it: "+onDisk.getAbsolutePath());
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("WARNING: file deleted before we could write to it: "+onDisk.getAbsolutePath());
+			}
 			return;
 		}
 		try {
@@ -145,13 +153,17 @@ public class CollectionFile {
 									buffedWriter.write("no");
 								break;
 							default:
-								System.err.println("WARNING: saving naked property (may not get loaded): "+p.getKey());
+								if(Onapos.DEBUG_MODE) {
+									System.err.println("WARNING: saving naked property (may not get loaded): "+p.getKey());
+								}
 								break;
 						}
 						buffedWriter.newLine();
 					} catch (PropertyException e) {
 						// TODO: if PropertyException gets thrown any other way, this code becomes reachable
-						System.err.println("Unreachable code, but the compiler don't care none anyhow!");
+						if(Onapos.DEBUG_MODE) {
+							System.err.println("Unreachable code, but the compiler don't care none anyhow!");
+						}
 						System.exit(42);
 					}
 				}
@@ -160,8 +172,10 @@ public class CollectionFile {
 			}
 			buffedWriter.flush();
 		} catch(IOException e) {
-			System.err.println("WARNING: file may be corrupted (IOException encountered while writing)");
-			e.printStackTrace(System.err);
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("WARNING: file may be corrupted (IOException encountered while writing)");
+				e.printStackTrace(System.err);
+			}
 		}
 	}
 	
@@ -173,18 +187,24 @@ public class CollectionFile {
 		FileReader reader;
 		BufferedReader buffedReader;
 		if(!onDisk.canRead()) {
-			System.err.println("WARNING: collection file could not be read: "+onDisk.getName());
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("WARNING: collection file could not be read: "+onDisk.getName());
+			}
 			return null;
 		}
 		if(onDisk.isDirectory()) {
-			System.err.println("WARNING: tried to load a directory as a collection!");
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("WARNING: tried to load a directory as a collection!");
+			}
 			return null;
 		}
 		try {
 			reader = new FileReader(onDisk);
 			buffedReader = new BufferedReader(reader);
 		} catch(FileNotFoundException e) {
-			System.err.println("WARNING: file deleted before we could read it: "+onDisk.getName());
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("WARNING: file deleted before we could read it: "+onDisk.getName());
+			}
 			return null;
 		}
 		try {
@@ -262,8 +282,10 @@ public class CollectionFile {
 			collection.addProperties(properties);
 			return collection;
 		} catch(IOException e) {
-			System.err.println("WARNING: exception occurred while reading file:"+onDisk.getName());
-			e.printStackTrace(System.err);
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("WARNING: exception occurred while reading file:"+onDisk.getName());
+				e.printStackTrace(System.err);
+			}
 			return null;
 		}
 	}

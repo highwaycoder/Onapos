@@ -179,7 +179,9 @@ public class OnaposUI {
 	 */
 	public void addItemPanel() {
 		if(addItemPanelExists) {
-			System.err.println("Warning (inefficiency): called 'addItemPanel()' when one already exists");
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("Warning (inefficiency): called 'addItemPanel()' when one already exists");
+			}
 			return; // don't do this more than once
 		}
 		JButton addItemButton = new JButton("Add");
@@ -311,7 +313,9 @@ public class OnaposUI {
 		}
 		int index = collectionSelector.getSelectedIndex();
 		if(index < 0 || index > collections.size()) {
-			System.err.println("Warning: tried to access collection outside the collection of collections (inception?)");
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("Warning: tried to access collection outside the collection of collections (inception?)");
+			}
 			return null;
 		}
 		return collections.get(collectionSelector.getSelectedIndex());
@@ -371,21 +375,29 @@ public class OnaposUI {
 	private void loadCollections() throws IOException {
 		File collectionDir = new File(collectionLocation);
 		if(!collectionDir.exists()) {
-			System.err.print("WARNING: collection directory does not exist, trying to create: ");
+			if(Onapos.DEBUG_MODE) {
+				System.err.print("WARNING: collection directory does not exist, trying to create: ");
+			}
 			if(!collectionDir.mkdirs()) {
-				System.err.println("failure");
-				System.err.println("proceding without existing collections");
-			} else {
+				if(Onapos.DEBUG_MODE) {
+					System.err.println("failure");
+					System.err.println("proceding without existing collections");
+				}
+			} else if(Onapos.DEBUG_MODE) {
 				System.err.println("success");
 			}
 		}
 		File[] collectionFiles = collectionDir.listFiles();
 		if(collectionFiles == null) {
-			System.err.println("WARNING: collection directory could not be read, does not exist");
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("WARNING: collection directory could not be read, does not exist");
+			}
 			return;
 		}
 		if(collectionFiles.length == 0) {
-			System.err.println("WARNING: collection directory is empty");
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("WARNING: collection directory is empty");
+			}
 			return;
 		}
 		for(File collectionFile : collectionFiles) {
@@ -424,12 +436,12 @@ public class OnaposUI {
 	public void deleteCollection(Collection selectedCollection) {
 		// first delete from disk
 		File onDisk = new File(DEFAULT_COLLECTION_LOCATION + selectedCollection.getName() + FILE_EXTENSION);
-		if(!onDisk.delete()) {
+		if(!onDisk.delete() && Onapos.DEBUG_MODE) {
 			System.err.println("Warning: did not delete file (does not exist?): "+onDisk.getAbsolutePath());
 		}
 		// then from the UI
 		collections.remove(selectedCollection);
-		if(!collectionSelectorModel.removeElement(selectedCollection.getName())){
+		if(!collectionSelectorModel.removeElement(selectedCollection.getName()) && Onapos.DEBUG_MODE){
 			System.err.println("Warning: Tried to remove collection that didn't exist.");
 		}
 		if(collectionSelector!=null) {
