@@ -92,28 +92,30 @@ public class OnaposUI {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		OnaposSplashScreen splash = new OnaposSplashScreen();
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setLayout(new MigLayout());
 		frame.setTitle("Onapos - a simple collections manager");
-		frame.setVisible(true);
 		frame.addWindowListener(new OnaposWindowListener(this));
+		splash.setProgress(5); // we should be at about 5% by this point
 		
 		// by default, the add item panel isn't displayed
 		addItemPanelExists = false;
+		splash.setProgress(6); // updating more frequently is nice
 		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
-		
+		splash.setProgress(8);
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
+		splash.setProgress(10);
 		
 		JMenuItem mntmNewCollection = new JMenuItem("New Collection");
 		mntmNewCollection.addActionListener(new NewCollectionListener(this));
 		JMenuItem mntmOpenCollection = new JMenuItem("Open Collection");
 		mntmOpenCollection.addActionListener(new OpenCollectionListener(this));
-		
+		splash.setProgress(15);
 		
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(new ActionListener() {
@@ -124,6 +126,7 @@ public class OnaposUI {
 				frame.dispose();
 			}
 		});
+		splash.setProgress(20);
 		
 		JLabel collectionSelectorLabel = new JLabel("Collection:");
 		collectionSelectorModel = new DefaultListModel();
@@ -134,15 +137,19 @@ public class OnaposUI {
 		collectionMenu.add(deleteCollection);
 		deleteCollection.addActionListener(new DeleteCollectionListener(this));
 		collectionSelector.addMouseListener(new CollectionSelectorMouseListener(collectionMenu,collectionSelector));
+		splash.setProgress(30);
+		
 		
 		// this menu item must be created after the collection selector list
 		JMenuItem mntmSaveCollection = new JMenuItem("Save Collection");
 		final SaveCollectionListener scl = new SaveCollectionListener();
+		splash.setProgress(35);
 		mntmSaveCollection.addActionListener(scl);
-		
+		splash.setProgress(40);
 		
 		collectionViewData = new DefaultTableModel();
 		collectionView = new JTable(collectionViewData);
+		splash.setProgress(45);
 		
 		class CollectionSelectionListener implements ListSelectionListener {
 			
@@ -154,24 +161,36 @@ public class OnaposUI {
 			}
 			
 		}
-		
+		splash.setProgress(55);
 		collectionSelector.addListSelectionListener(new CollectionSelectionListener());
-		
+		splash.setProgress(56);
 
 		addItemPanel = new JPanel();
 		addItemPanel.setLayout(new MigLayout("fillx", "[right]rel[grow,fill]", "[]10[]"));
+		splash.setProgress(60);
 		
 		// setup the menu in the proper order:
 		mnFile.add(mntmNewCollection);
 		mnFile.add(mntmOpenCollection);
 		mnFile.add(mntmSaveCollection);
 		mnFile.add(mntmExit);
-
+		splash.setProgress(75);
+		
 		frame.add(collectionSelectorLabel);
 		frame.add(collectionSelector);
 		frame.add(new JScrollPane(collectionView));
-		
+		splash.setProgress(80);
 		frame.pack();
+		splash.setProgress(90);
+		frame.setLocationByPlatform(true);
+		splash.setProgress(100); // we're done!
+		try {
+			Thread.sleep(250);
+		} catch (InterruptedException e1) {
+			System.exit(-1); // allow the user to force-quit the application while sleeping in case sleep goes wrong
+		} // pause for a quarter-second
+		splash.dispose(); // last thing before displaying the main window is to hide the splash
+		frame.setVisible(true);
 	}
 	
 	/**
