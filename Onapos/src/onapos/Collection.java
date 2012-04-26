@@ -138,16 +138,42 @@ public class Collection {
 	}
 	
 	/**
+	 * Searches for an item in the collection (string version)
+	 * @param searchField the property to search by
+	 * @param searchValue the value to search for
+	 * @return the first Item that matches, or null
+	 */
+	public Item findItem(String searchField, String searchValue) {
+		searchField = searchField.toLowerCase(); // make sure we're comparing lower-case versions
+		if(searchValue == null) {
+			if(Onapos.DEBUG_MODE) {
+				System.err.println("Warning: null property passed to findItem()");
+			}
+			return null;
+		}
+		for(Item i : items) {
+			if(i.getProperties().containsKey(searchField)) {
+				if(i.getProperties().get(searchField).equals(searchValue)) return i;
+			}
+		}
+		if(Onapos.DEBUG_MODE) {
+			System.err.println("Warning: item not found");
+		}
+		return null;
+	}
+	
+	/**
 	 * Searches for an item in the collection
 	 * @param searchField the property to search in
 	 * @param searchValue the value to search for
-	 * @return the first Item that matches the description
+	 * @return the first Item that matches, or null
 	 */
-	public Item findItem(String sf,Property searchValue) {
-		String searchField = sf.toLowerCase(); // make sure we're comparing lower-case versions
+	@Deprecated
+	public Item findItem(String searchField,Property searchValue) {
+		searchField = searchField.toLowerCase(); // make sure we're comparing lower-case versions
 		if(searchValue == null) {
 			if(Onapos.DEBUG_MODE) {
-				System.err.println("Warning: null property in findItem()");
+				System.err.println("Warning: null property passed to findItem()");
 			}
 			return null;
 		}
@@ -217,4 +243,5 @@ public class Collection {
 	public void setType(String to) {
 		type = to;
 	}
+
 }

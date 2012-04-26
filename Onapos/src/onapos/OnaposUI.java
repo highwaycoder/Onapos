@@ -14,8 +14,10 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -45,6 +47,8 @@ public class OnaposUI {
 	private JList collectionSelector;
 	private boolean addItemPanelExists;
 	private JPanel addItemPanel;
+	private JTextField searchTextField;
+	private JComboBox searchType;
 	
 	/**
 	 * Launch the application.
@@ -68,11 +72,6 @@ public class OnaposUI {
 	 */
 	public OnaposUI() {
 		collections = new ArrayList<Collection>();
-		try {
-			loadCollections();
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/**
@@ -86,6 +85,8 @@ public class OnaposUI {
 			collectionSelector.invalidate();
 			collectionSelector.repaint();
 		}
+		for(String s : c.getProperties().keySet())
+			searchType.addItem(s);
 	}
 
 	/**
@@ -127,6 +128,49 @@ public class OnaposUI {
 				frame.dispose();
 			}
 		});
+		
+		// initialise the global search box
+		Box searchBox = new Box(3);
+		searchType = new JComboBox();
+		searchTextField = new JTextField(20);
+		JButton searchButton = new JButton("Search");
+		searchButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Item selectedItem = null;
+				// first make sure the item actually exists in a collection
+				for(Collection c : collections) {
+					selectedItem = c.findItem(searchType.toString(), searchTextField.getText());
+					if(selectedItem!=null) {
+						setSelectedCollection(c);
+						break;
+					}
+				}
+				if(selectedItem==null) {
+					// TODO: tell the user it couldn't be found somehow
+					return;
+				}
+				boolean found = false;
+				int rowIndex = 0;
+				int columnIndex = collectionViewData.findColumn(searchType.toString()); 
+				while(!found) {
+					if(collectionViewData.getValueAt(rowIndex, columnIndex).equals(selectedItem)) {
+						collectionView.setRowSelectionInterval(rowIndex,rowIndex);
+						found = true;
+					}
+				}
+				
+			}
+		});
+		for(Collection c : collections) {
+			for(String s : c.getProperties().keySet()) {
+				searchType.addItem(s);
+			}
+		}
+		searchBox.add(searchType);
+		searchBox.add(searchTextField);
+		searchBox.add(searchButton);
 		
 		// initialise the collection selector
 		JLabel collectionSelectorLabel = new JLabel("Collection:");
@@ -176,9 +220,17 @@ public class OnaposUI {
 		mnFile.add(mntmOpenCollection);
 		mnFile.add(mntmSaveCollection);
 		mnFile.add(mntmExit);
-		splash.setProgress(75);
+		splash.setProgress(70);
+		
+		// load collections here
+		try {
+			loadCollections();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 		
 		// finally, pack up the frame and send it to the UI for processing
+		frame.add(searchBox,"north");
 		frame.add(collectionSelectorLabel);
 		frame.add(collectionSelector);
 		frame.add(new JScrollPane(collectionView));
@@ -342,6 +394,15 @@ public class OnaposUI {
 	}
 	
 	/**
+	 * Set the currently selected collection to collection.c
+	 * @param c
+	 */
+	private void setSelectedCollection(Collection c) {
+		if(getSelectedCollection().equals(c)) return; // nothing to do here
+		collectionSelector.setSelectedValue(c, true); // thank you, Java for this method!
+	}
+	
+	/**
 	 * This function refreshes the collection list whenever 'collections' is modified
 	 * TODO: deprecate this (there are more efficient ways to keep them in sync)
 	 */
@@ -422,7 +483,7 @@ public class OnaposUI {
 		}
 		for(File collectionFile : collectionFiles) {
 			CollectionFile cf = new CollectionFile(collectionFile);
-			collections.add(cf.read());
+			addCollection(cf.read());
 		}
 	}
 	
@@ -468,6 +529,9 @@ public class OnaposUI {
 			collectionSelector.validate();
 			collectionSelector.repaint();
 		}
+		// also remove its properties from searchType
+		for(String s : selectedCollection.getProperties().keySet())
+			searchType.removeItem(s);
 	}
 	
 }

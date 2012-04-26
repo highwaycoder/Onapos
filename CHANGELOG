@@ -1,5 +1,6 @@
 == Version 0.3 ==
  - #17 added 'delete collection' functionality
+ - #1 fixed bug involving deleting items
 
 == Version 0.2 ==
  - #9 fixed bug where collections were saved without a name/type
