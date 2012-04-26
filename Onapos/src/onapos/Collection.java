@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 public class Collection {
 	private List<Item> items;
@@ -164,6 +163,18 @@ public class Collection {
 	}
 	
 	/**
+	 * Fetch an item we have the uid of from the Collection
+	 * @param uid the UID of the item we wish to retrieve
+	 * @return the item or null if the item doesn't exist in this Collection
+	 */
+	public Item getItem(int uid) {
+		for(Item i : items) {
+			if(i.getUID() == uid) return i;
+		}
+		return null;
+	}
+	
+	/**
 	 * Removes a specific Item from this Collection
 	 * Note: if two or more items have the same UID, this function will delete 
 	 * all of them 
@@ -176,15 +187,18 @@ public class Collection {
 	}
 	
 	/**
-	 * Generates a Unique ID for an Item (using a Random)
+	 * Generates a Unique ID for an Item
 	 * @return an integer unique to a single Item in this Collection
 	 */
 	public int generateUID() {
+		if(items.size() == 0) return 0; // no items in the collection yet
 		int uid = 0;
+		// get the highest existing uid
 		for(Item i : items) {
-			Random r = new Random();
-			if(i.getUID()==uid) uid = r.nextInt();
+			if(i.getUID() > uid) uid = i.getUID();
 		}
+		// add one
+		uid++;
 		return uid;
 	}
 	

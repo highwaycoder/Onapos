@@ -6,13 +6,13 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -98,25 +98,26 @@ public class OnaposUI {
 		frame.setLayout(new MigLayout());
 		frame.setTitle("Onapos - a simple collections manager");
 		frame.addWindowListener(new OnaposWindowListener(this));
-		splash.setProgress(5); // we should be at about 5% by this point
 		
 		// by default, the add item panel isn't displayed
 		addItemPanelExists = false;
-		splash.setProgress(6); // updating more frequently is nice
+		splash.setProgress(5); // we should be at about 5% by this point
 		
+		// initialise the menu bar
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
-		splash.setProgress(8);
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 		splash.setProgress(10);
 		
+		// initialise the menus
 		JMenuItem mntmNewCollection = new JMenuItem("New Collection");
 		mntmNewCollection.addActionListener(new NewCollectionListener(this));
 		JMenuItem mntmOpenCollection = new JMenuItem("Open Collection");
 		mntmOpenCollection.addActionListener(new OpenCollectionListener(this));
 		splash.setProgress(15);
 		
+		// initialise the exit menu item
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(new ActionListener() {
 			@Override
@@ -126,8 +127,8 @@ public class OnaposUI {
 				frame.dispose();
 			}
 		});
-		splash.setProgress(20);
 		
+		// initialise the collection selector
 		JLabel collectionSelectorLabel = new JLabel("Collection:");
 		collectionSelectorModel = new DefaultListModel();
 		refreshCollectionList();
@@ -137,20 +138,21 @@ public class OnaposUI {
 		collectionMenu.add(deleteCollection);
 		deleteCollection.addActionListener(new DeleteCollectionListener(this));
 		collectionSelector.addMouseListener(new CollectionSelectorMouseListener(collectionMenu,collectionSelector));
-		splash.setProgress(30);
+		splash.setProgress(25);
 		
 		
-		// this menu item must be created after the collection selector list
+		// this menu item must be created after the collection selector list, unfortunately
 		JMenuItem mntmSaveCollection = new JMenuItem("Save Collection");
 		final SaveCollectionListener scl = new SaveCollectionListener();
-		splash.setProgress(35);
 		mntmSaveCollection.addActionListener(scl);
-		splash.setProgress(40);
+		splash.setProgress(30);
 		
+		// initialise the collection viewer
 		collectionViewData = new DefaultTableModel();
 		collectionView = new JTable(collectionViewData);
-		splash.setProgress(45);
+		splash.setProgress(40);
 		
+		// listen for a change in the collection selector and update the table as appropriate
 		class CollectionSelectionListener implements ListSelectionListener {
 			
 			public void valueChanged(ListSelectionEvent arg0) {	
@@ -161,10 +163,10 @@ public class OnaposUI {
 			}
 			
 		}
-		splash.setProgress(55);
 		collectionSelector.addListSelectionListener(new CollectionSelectionListener());
-		splash.setProgress(56);
+		splash.setProgress(50);
 
+		// initialise the addItemPanel (we don't add it yet though)
 		addItemPanel = new JPanel();
 		addItemPanel.setLayout(new MigLayout("fillx", "[right]rel[grow,fill]", "[]10[]"));
 		splash.setProgress(60);
@@ -176,25 +178,27 @@ public class OnaposUI {
 		mnFile.add(mntmExit);
 		splash.setProgress(75);
 		
+		// finally, pack up the frame and send it to the UI for processing
 		frame.add(collectionSelectorLabel);
 		frame.add(collectionSelector);
 		frame.add(new JScrollPane(collectionView));
 		splash.setProgress(80);
 		frame.pack();
 		splash.setProgress(90);
-		frame.setLocationByPlatform(true);
+		frame.setLocationRelativeTo(null);
 		splash.setProgress(100); // we're done!
 		try {
+			// wait for about a quarter of a second for the user to see the splash complete
 			Thread.sleep(250);
 		} catch (InterruptedException e1) {
 			System.exit(-1); // allow the user to force-quit the application while sleeping in case sleep goes wrong
-		} // pause for a quarter-second
+		}
 		splash.dispose(); // last thing before displaying the main window is to hide the splash
 		frame.setVisible(true);
 	}
 	
 	/**
-	 * Create the 'add item' panel (so long as it already exists)
+	 * Create the 'add item' panel (so long as it doesn't already exist)
 	 */
 	public void addItemPanel() {
 		if(addItemPanelExists) {
@@ -203,15 +207,13 @@ public class OnaposUI {
 			}
 			return; // don't do this more than once
 		}
+		// make frame disappear while we reset it, it looks slightly less odd than the alternative flickering
+		frame.setVisible(false);
 		JButton addItemButton = new JButton("Add");
 		JButton delItemButton = new JButton("Delete");
 		
 		Map<JLabel,JTextField> itemProperties = new HashMap<JLabel,JTextField>();
-		String[] properties = new String[getSelectedCollection().getProperties().size()];
-		
-		// OH my god what an ugly hack.  Oh well, it works!
-		getSelectedCollection().getProperties().keySet().toArray(properties);
-		Collections.reverse(Arrays.asList(properties));
+		Set<String> properties = getSelectedCollection().getProperties().keySet();
 		
 		for(String property : properties) {
 			itemProperties.put(new JLabel(property), new JTextField(20));
@@ -230,24 +232,20 @@ public class OnaposUI {
 		addItemPanel.add(delItemButton,"");
 		frame.add(addItemPanel);
 		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 		addItemPanelExists = true;
 	}
 	
 	/**
 	 * Gets the currently selected item
-	 * FIXME: currently searches through collectionViewData for the item based on the
-	 * first column.  This may cause problems later with collections that have two
-	 * items with the same first column (we're just -assuming- the user is going to use
-	 * the first column for something like 'title', and that column is going to be a uid)
-	 * NOTE: the fix might involve the newly created Item.uid field, but I'm still not
-	 * sure how to implement it.
 	 * @return the currently selected Item or null if no item is selected
 	 */
 	public Item getSelectedItem() {
 		if(collectionView.getSelectedRow()==-1) return null;
-		String itemSearchField = collectionView.getColumnName(0);
-		Property itemSearchValue = (Property) collectionViewData.getValueAt(collectionView.getSelectedRow(),0);
-		return getSelectedCollection().findItem(itemSearchField,itemSearchValue);
+		return getSelectedCollection().getItem(
+				(Integer) collectionViewData.getValueAt(collectionView.getSelectedRow(), collectionViewData.getColumnCount()-1)
+				);
 	}
 	
 	/**
@@ -288,9 +286,12 @@ public class OnaposUI {
 		for(String title : c.getProperties().keySet()) {
 			collectionViewData.addColumn(titleCase(title));
 		}
+		collectionViewData.addColumn("Item UID");
 		collectionViewData.fireTableStructureChanged();
 		for(Item item : c.getItems()) {
-			collectionViewData.addRow(item.getProperties().values().toArray());
+			Vector<Object> row = new Vector<Object>(item.getProperties().values());
+			row.add(item.getUID());
+			collectionViewData.addRow(row);
 		}
 		collectionViewData.fireTableDataChanged();
 		// don't create an ItemPanel if it already exists

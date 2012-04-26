@@ -30,8 +30,8 @@ public class Property implements Comparable<Property> {
 				try {
 					value = Onapos.SDF.parse((String) v);
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					// store as string by default
+					value = (String) v;
 				}
 			break;
 		case DOUBLE:

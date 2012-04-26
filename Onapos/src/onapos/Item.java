@@ -18,6 +18,7 @@ public class Item implements Comparable<Item> {
 	public Item(int uid) {
 		properties = new HashMap<String,Property>();
 		tags = new ArrayList<String>();
+		this.uid = uid;
 	}
 	
 	/**
@@ -68,16 +69,11 @@ public class Item implements Comparable<Item> {
 	
 	/**
 	 * Compare to some other item by some default method
-	 * @deprecated because there's no sensible way to choose what to sort by 'by default'
+	 * WARNING: The default method is uid, which is not necessarily what you want.  Be explicit!
 	 */
-	@Deprecated
 	@Override
 	public int compareTo(Item arg0) {
-		// TODO: some default way of sorting, perhaps?
-		if(Onapos.DEBUG_MODE) {
-			System.err.println("Warning (deprecation): compareTo(Item arg0) is deprecated");
-		}
-		return 0;
+		return uid - arg0.getUID();
 	}
 	
 	/**

@@ -57,9 +57,23 @@ public class AddItemListener implements ActionListener {
 		case STRING:
 			return new Property(t,v);
 		case INTEGER:
-			return new Property(t,Integer.parseInt(v));
+			try {
+				return new Property(t,Integer.parseInt(v));
+			} catch (NumberFormatException e) {
+				if(Onapos.DEBUG_MODE) {
+					System.err.println("Warning: Could not parse integer "+v+", storing as 0 instead.");
+				}
+				return new Property(t,0);
+			}
 		case DOUBLE:
-			return new Property(t,Double.parseDouble(v));
+			try {
+				return new Property(t,Double.parseDouble(v));
+			} catch (NumberFormatException e) {
+				if(Onapos.DEBUG_MODE) {
+					System.err.println("Warning: Could not parse double "+v+", storing as 0.0 instead.");
+				}
+				return new Property(t,0.0);
+			}
 		case DATE:
 			// allows us to keep a uniform date format across everywhere
 			try {

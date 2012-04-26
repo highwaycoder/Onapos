@@ -20,17 +20,6 @@ public class CollectionFile {
 	private Collection collection;
 	
 	/**
-	 * This constructor should never have existed, but since it did
-	 * and the code was public while it did, I shouldn't just remove it
-	 * entirely.
-	 * Every time you use this constructor, God kills a kitten.
-	 * No, really, you get bugs.  So don't.
-	 * @deprecated seriously, don't use it!
-	 */
-	@Deprecated
-	public CollectionFile() {}
-	
-	/**
 	 * Constructor for reading collections from disk
 	 * @param infile the file containing the collection
 	 */
@@ -112,15 +101,10 @@ public class CollectionFile {
 				buffedWriter.write("item {");
 				buffedWriter.newLine();
 				// write tags
-				buffedWriter.write("tags:");
-				if(i.getTags().size() == 0) {
-					if(Onapos.DEBUG_MODE) {
-						System.err.println("Warning: Item with no tags attached being saved");
-					}
-				}
-				else {
+				if(i.getTags().size() != 0) {
+					buffedWriter.write("tags:");
 					// keep a reference to the last tag, awbc
-					String lastTag = i.getTags().get(i.getTags().size());
+					String lastTag = i.getTags().get(i.getTags().size()-1);
 					for(String tag : i.getTags()) {
 						buffedWriter.write(tag);
 						// use that reference to see if we're on the last tag
@@ -159,6 +143,7 @@ public class CollectionFile {
 								break;
 						}
 						buffedWriter.newLine();
+						buffedWriter.flush();
 					} catch (PropertyException e) {
 						// TODO: if PropertyException gets thrown any other way, this code becomes reachable
 						if(Onapos.DEBUG_MODE) {
@@ -169,8 +154,9 @@ public class CollectionFile {
 				}
 				buffedWriter.append("}");
 				buffedWriter.newLine();
+				buffedWriter.flush();
 			}
-			buffedWriter.flush();
+			buffedWriter.close();
 		} catch(IOException e) {
 			if(Onapos.DEBUG_MODE) {
 				System.err.println("WARNING: file may be corrupted (IOException encountered while writing)");
