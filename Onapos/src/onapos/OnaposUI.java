@@ -204,6 +204,9 @@ public class OnaposUI {
 				if((c = getSelectedCollection()) == null) return; // silent fail (nothing selected)
 				scl.setCollection(c);
 				populateTable(c);
+				// refresh Add Item Panel:
+				delItemPanel();
+				addItemPanel();
 			}
 			
 		}
@@ -259,8 +262,6 @@ public class OnaposUI {
 			}
 			return; // don't do this more than once
 		}
-		// make frame disappear while we reset it, it looks slightly less odd than the alternative flickering
-		frame.setVisible(false);
 		JButton addItemButton = new JButton("Add");
 		JButton delItemButton = new JButton("Delete");
 		
@@ -282,6 +283,8 @@ public class OnaposUI {
 		
 		addItemPanel.add(addItemButton,"skip,width 80px!");
 		addItemPanel.add(delItemButton,"");
+		// make frame disappear while we reset it, it looks slightly less odd than the alternative flickering
+		frame.setVisible(false);
 		frame.add(addItemPanel);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
@@ -313,9 +316,6 @@ public class OnaposUI {
 	
 	/**
 	 * Remove the 'add item' panel from the screen (if no collection is selected)
-	 * NOTE: this function is not currently used, and I'm struggling to think of a
-	 * reason to keep it - it may be deprecated in a future version, unless I make
-	 * use of it.
 	 */
 	public void delItemPanel() {
 		if(addItemPanel==null) {
@@ -440,12 +440,6 @@ public class OnaposUI {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			new NewCollectionFrame(context);
-			// load collections from file
-			try {
-				loadCollections();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
