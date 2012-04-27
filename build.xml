@@ -1,0 +1,59 @@
+<project name="Onapos" default="jar" basedir=".">
+	<description>
+		A simple ant script to build our chops.
+	</description>
+
+	<property name="classdir" location="build/classes"/>
+   <property name="jardir" location="build"/>
+   <property name="jarname" location="build/Onapos.jar"/>
+
+	<property name="srcdir" location="Onapos/src"/>
+	<property name="libdir" value="Onapos/lib"/>
+
+   <path id="class.path">
+      <fileset dir="${libdir}">
+         <include name="**/*.jar"/>
+      </fileset>
+   </path>
+
+	<target name="compile" depends="clean"
+			description="Compile source files.">
+		<mkdir dir="${classdir}"/>
+		<javac srcdir="${srcdir}" destdir="${classdir}">
+         <classpath refid="class.path"/>
+			<exclude name="Old*"/>
+		</javac>
+	</target>
+
+   <target name="jar" depends="compile"
+         description="Create .jar of project">
+      <jar destfile="${jarname}" basedir="${classdir}">
+         <manifest>
+            <attribute name="Main-Class" value="onapos/OnaposUI"/>
+         </manifest>
+         <zipgroupfileset dir="${libdir}" includes="**/*.jar"/>
+      </jar>
+   </target>
+
+	<target name="clean"
+			description="Clean up.">
+		<delete>
+			<fileset dir=".">
+				<include name="**/*.class"/>
+				<exclude name="${libdir}/*"/>
+			</fileset>
+		</delete>
+      <mkdir dir="${classdir}" />
+      <delete includeEmptyDirs="true">
+         <fileset dir="${classdir}"/>
+      </delete>
+      <mkdir dir="${jardir}" />
+      <delete includeEmptyDirs="true">
+         <fileset dir="${jardir}"/>
+      </delete>
+	</target>
+
+
+</project>
+
+
