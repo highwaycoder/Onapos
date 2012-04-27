@@ -361,6 +361,9 @@ public class OnaposUI {
 		StringTokenizer strtok = new StringTokenizer(s);
 		// handle the null error: (should really output a runtime warning here)
 		if(s == null) return null;
+      // handle the empty string error. (Occurs when users add empty properties)
+      if(!strtok.hasMoreTokens()) return s;
+
 		while(strtok.hasMoreTokens()) {
 			String word = strtok.nextToken();
 			String firstLetter = word.substring(0,1);
