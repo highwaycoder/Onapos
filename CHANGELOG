@@ -1,17 +1,20 @@
 == Version 0.3 ==
- - #17 added 'delete collection' functionality
- - #1 fixed bug involving deleting items
+ - #17 added 'delete collection' functionality (cjbrowne)
+ - #1 fixed bug involving deleting items (cjbrowne)
+ - #24 fixed bug involving creating new collections (cjbrowne)
+ - #25 fixed bug where an empty string as a property would cause an exception (spkelly)
+ - numerous other small bug fixes and improvements (cjbrowne)
 
 == Version 0.2 ==
- - #9 fixed bug where collections were saved without a name/type
- - #8 fixed bug where selecting a collection caused the 'add item' panel to grow
- - #10 fixed minor inefficiency bug
- - #15 fixed regressiong bug where collections weren't loaded properly
- - #16 added auto-save feature (on exit)
- - #14 fixed bug where collection list was becoming corrupted in certain circumstances
+ - #9 fixed bug where collections were saved without a name/type (cjbrowne)
+ - #8 fixed bug where selecting a collection caused the 'add item' panel to grow (cjbrowne)
+ - #10 fixed minor inefficiency bug (cjbrowne)
+ - #15 fixed regressiong bug where collections weren't loaded properly (cjbrowne)
+ - #16 added auto-save feature (on exit) (cjbrowne)
+ - #14 fixed bug where collection list was becoming corrupted in certain circumstances (cjbrowne)
 
 == Version 0.1 ==
- - #7 Improved "new collection" dialogue
+ - #7 Improved "new collection" dialogue (cjbrowne)
 
 == Version 0 ==
-Initial release version of the software
+Initial release version of the software (cjbrowne)
