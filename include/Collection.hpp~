@@ -1,0 +1,13 @@
+#ifndef COLLECTION_HPP
+#define COLLECTION_HPP
+
+class Collection
+{
+private:
+  
+public:
+  
+};
+
+
+#endif
